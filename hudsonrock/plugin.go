@@ -17,6 +17,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"hudsonrock_email_search":    tableHudsonrockEmailSearch(ctx),
 			"hudsonrock_domain_search":   tableHudsonrockDomainSearch(ctx),
 			"hudsonrock_ip_search":       tableHudsonrockIpSearch(ctx),
+			"hudsonrock_urls_by_domain":  tableHudsonrockUrlsByDomain(ctx),
 		},
 	}
 }
