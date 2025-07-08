@@ -34,4 +34,4 @@ where
 
 ## Documentation
 
-See the [Hudson Rock API docs](https://docs.hudsonrock.com/docs/file-search) for more details on available endpoints and parameters.
+See the [Hudson Rock API docs](https://docs.hudsonrock.com/docs/file-search) for more details on available endpoints and parameters. 
