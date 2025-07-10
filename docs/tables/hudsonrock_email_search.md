@@ -1,231 +1,77 @@
 ---
-title: "Steampipe Table: whois_domain - Query Whois Domains using SQL"
-description: "Allows users to query Whois Domains, providing specific details about domain names, their registration, and ownership information."
+title: "Steampipe Table: hudsonrock_email_search"
+description: "Query Hudson Rock infostealer and credential data by email with SQL."
 ---
 
-# Table: whois_domain - Query Whois Domains using SQL
+# Table: hudsonrock_email_search
 
-Whois is a protocol that is used to query databases that store the registered users or assignees of an Internet resource, such as a domain name or an IP address block. It provides information related to the registration and ownership of a domain name. This includes details about the registrant, administrative, billing and technical contacts.
+The `hudsonrock_email_search` table allows you to query compromised credentials and infostealer data by email using the Hudson Rock API.
 
 ## Table Usage Guide
 
-The `whois_domain` table provides insights into domain names within the Whois protocol. As a security analyst, explore domain-specific details through this table, including registration, ownership, and associated metadata. Utilize it to uncover information about domains, such as their registrant details, administrative contacts, and the status of the domain.
+The `hudsonrock_email_search` table provides insights about compromised credentials, infostealer malware, and related data for a given email address.
 
 **Important Notes**
-- It's not practical to list all domains in the world, so this table requires a
-`domain` qualifier to be passed in the `where` or `join` clause for all queries.
+- You must provide an `email` qualifier in the `where` clause for all queries.
 
 ## Examples
 
-### Basic whois info
+### Basic email intelligence
 
-```sql+postgres
+```sql
 select
-  domain,
-  expiration_date
+  email,
+  message,
+  date_compromised,
+  stealer_family,
+  computer_name,
+  operating_system,
+  ip
 from
-  whois_domain
+  hudsonrock_email_search
 where
-  domain = 'steampipe.io';
+  email = 'user@example.com';
 ```
 
-```sql+sqlite
+### Get all data for an email
+
+```sql
 select
-  domain,
-  expiration_date
+  *
 from
-  whois_domain
+  hudsonrock_email_search
 where
-  domain = 'steampipe.io';
+  email = 'user@example.com';
 ```
 
-### Days until expiration
+### List top passwords and logins for an email
 
-```sql+postgres
+```sql
 select
-  domain,
-  expiration_date,
-  date_part('day', expiration_date - current_date) as days_until_expiration
+  email,
+  top_passwords,
+  top_logins
 from
-  whois_domain
+  hudsonrock_email_search
 where
-  domain = 'steampipe.io';
+  email = 'user@example.com';
 ```
 
-```sql+sqlite
-select
-  domain,
-  expiration_date,
-  julianday(expiration_date) - julianday(date('now')) as days_until_expiration
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
+## Columns
 
-### Get name server information
-
-```sql+postgres
-select
-  domain,
-  name_servers
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-```sql+sqlite
-select
-  domain,
-  name_servers
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-### Check domain status codes
-
-Commonly used protections:
-
-```sql+postgres
-select
-  domain,
-  client_delete_prohibited,
-  client_transfer_prohibited,
-  client_update_prohibited,
-  server_delete_prohibited,
-  server_transfer_prohibited,
-  server_update_prohibited
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-```sql+sqlite
-select
-  domain,
-  client_delete_prohibited,
-  client_transfer_prohibited,
-  client_update_prohibited,
-  server_delete_prohibited,
-  server_transfer_prohibited,
-  server_update_prohibited
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-### Check for any EPP status code:
-
-```sql+postgres
-select
-  domain,
-  status,
-  status ? 'pendingtransfer' as pending_transfer
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-```sql+sqlite
-select
-  domain,
-  status,
-  json_extract(status, '$.pendingtransfer') as pending_transfer
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-### Contact information
-
-```sql+postgres
-select
-  domain,
-  jsonb_pretty(admin) as admin,
-  jsonb_pretty(billing) as billing,
-  jsonb_pretty(registrant) as registrant,
-  jsonb_pretty(technical) as technical
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-```sql+sqlite
-select
-  domain,
-  admin,
-  billing,
-  registrant,
-  technical
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-### Registrar managing the domain
-
-```sql+postgres
-select
-  domain,
-  registrar->>'name' as registrar
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-```sql+sqlite
-select
-  domain,
-  json_extract(registrar, '$.name') as registrar
-from
-  whois_domain
-where
-  domain = 'steampipe.io';
-```
-
-### Working with multiple domains
-
-```sql+postgres
-select
-  domain,
-  expiration_date
-from
-  whois_domain
-where
-  domain in (
-    'github.com',
-    'google.com',
-    'steampipe.io',
-    'yahoo.com'
-  );
-```
-
-```sql+sqlite
-select
-  domain,
-  expiration_date
-from
-  whois_domain
-where
-  domain in (
-    'github.com',
-    'google.com',
-    'steampipe.io',
-    'yahoo.com'
-  );
-```
-
-## Implementation notes
-
-* Automatically retries with backoff. WHOIS servers are fussy with throttling.
-* May return partial results, some WHOIS servers return domain info but throttle / skip contact information.
+| Name                    | Type    | Description                                      |
+|-------------------------|---------|--------------------------------------------------|
+| email                   | string  | Email searched.                                  |
+| message                 | string  | API message about the email.                     |
+| date_compromised        | timestamp | Date the credentials were compromised.           |
+| stealer_family          | string  | Infostealer malware family.                      |
+| computer_name           | string  | Name of the infected computer.                   |
+| operating_system        | string  | Operating system of the infected computer.       |
+| malware_path            | string  | Path to the malware on the system.               |
+| antiviruses             | json    | Antivirus software detected.                     |
+| ip                      | string  | IP address of the infected machine.              |
+| top_passwords           | json    | Top passwords found.                             |
+| top_logins              | json    | Top logins found.                                |
+| total_corporate_services| int     | Total corporate services found.                  |
+| total_user_services     | int     | Total user services found.                       |
+| data                    | json    | Raw data from the API response.                  |
