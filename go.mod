@@ -1,6 +1,6 @@
 module steampipe-plugin-hudsonrock
 
-go 1.20
+go 1.24.5
 
 require github.com/turbot/steampipe-plugin-sdk/v5 v5.7.0
 
