@@ -1,54 +1,54 @@
 ---
 organization: Turbot
 category: ["internet"]
-icon_url: "/images/plugins/turbot/whois.svg"
-brand_color: "#005A9C"
-display_name: WHOIS
-name: whois
-description: Steampipe plugin for querying domains, name servers and contact information from WHOIS.
-og_description: Query WHOIS with SQL! Open source CLI. No DB required. 
-og_image: "/images/plugins/turbot/whois-social-graphic.png"
+icon_url: "/images/plugins/turbot/hudsonrock.svg"
+brand_color: "#ffc300"
+display_name: Hudson Rock
+name: hudsonrock
+description: Steampipe plugin for querying domains, name servers and contact information from Hudson Rock.
+og_description: Query Hudson Rock with SQL! Open source CLI. No DB required.
+og_image: "/images/plugins/turbot/hudsonrock-social-graphic.png"
 engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
-# WHOIS + Steampipe
+# HudsonRock + Steampipe
 
 [Steampipe](https://steampipe.io) is an open-source zero-ETL engine to instantly query cloud APIs using SQL.
 
-[WHOIS](https://whois.icann.org/en/about-whois) is a widely used Internet record listing that identifies who owns a domain and how to get in contact with them. The Internet Corporation for Assigned Names and Numbers (ICANN) regulates domain name registration and ownership.
+[Hudson Rock](https://www.hudsonrock.com/) is an Israeli cybersecurity company specializing in cybercrime intelligence, with a focus on detecting and mitigating threats from Infostealer malware.
 
 For example:
 
 ```sql
 select
   domain,
-  expiration_date
+  total_stealers
 from
-  whois_domain
+  hudsonrock_domain_search
 where
   domain = 'steampipe.io';
 ```
 
 ```
-+--------------+---------------------+
-| domain       | expiration_date     |
-+--------------+---------------------+
-| steampipe.io | 2021-10-13 19:28:29 |
-+--------------+---------------------+
++--------------+----------------+
+| domain       | total_stealers |
++--------------+----------------+
+| steampipe.io | 32,213,918     |
++--------------+----------------+
 ```
 
 ## Documentation
 
-- **[Table definitions & examples →](/plugins/turbot/whois/tables)**
+- **[Table definitions & examples →](/plugins/turbot/hudsonrock/tables)**
 
 ## Get started
 
 ### Install
 
-Download and install the latest WHOIS plugin:
+Download and install the latest Hudson Rock plugin:
 
 ```bash
-steampipe plugin install whois
+steampipe plugin install hudsonrock
 ```
 
 ### Credentials
@@ -57,16 +57,16 @@ steampipe plugin install whois
 | - | - |
 | Credentials | No creds required |
 | Permissions | n/a |
-| Radius | Steampipe connects to the correct WHOIS server based on the TLD |
+| Radius | Steampipe connects to the correct Hudson Rock server based on the TLD |
 | Resolution | n/a |
 
 ### Configuration
 
-No configuration is needed. Installing the latest whois plugin will create a config file (`~/.steampipe/config/whois.spc`) with a single connection named `whois`:
+No configuration is needed. Installing the latest hudsonrock plugin will create a config file (`~/.steampipe/config/hudsonrock.spc`) with a single connection named `hudsonrock`:
 
 ```hcl
-connection "whois" {
-  plugin = "whois"
+connection "hudsonrock" {
+  plugin = "hudsonrock"
 }
 ```
 
