@@ -3,22 +3,23 @@ title: "Steampipe Table: hudsonrock_email_search"
 description: "Query Hudson Rock infostealer and credential data by email with SQL."
 ---
 
-# Table: hudsonrock_email_search
+# Table: hudsonrock_email_search - Query Hudson Rock Email Intelligence using SQL
 
-The `hudsonrock_email_search` table allows you to query compromised credentials and infostealer data by email using the Hudson Rock API.
+The `hudsonrock_email_search` table allows you to query compromised credentials and infostealer data by email using the Hudson Rock API. This table provides a detailed view of infostealer infections, password and login exposures, stealer malware families, and more for a given email address.
 
 ## Table Usage Guide
 
-The `hudsonrock_email_search` table provides insights about compromised credentials, infostealer malware, and related data for a given email address.
+The `hudsonrock_email_search` table provides insights about compromised credentials, infostealer malware, and related data for a given email address, including compromise date, stealer family, computer and OS details, IP address, and exposed passwords and logins.
 
 **Important Notes**
 - You must provide an `email` qualifier in the `where` clause for all queries.
+- This table is not intended for listing all emails, but for targeted intelligence on specific email addresses.
 
 ## Examples
 
 ### Basic email intelligence
 
-```sql
+```sql+postgres
 select
   email,
   message,
@@ -33,11 +34,15 @@ where
   email = 'user@example.com';
 ```
 
-### Get all data for an email
-
-```sql
+```sql+sqlite
 select
-  *
+  email,
+  message,
+  date_compromised,
+  stealer_family,
+  computer_name,
+  operating_system,
+  ip
 from
   hudsonrock_email_search
 where
@@ -46,7 +51,7 @@ where
 
 ### List top passwords and logins for an email
 
-```sql
+```sql+postgres
 select
   email,
   top_passwords,
@@ -57,21 +62,37 @@ where
   email = 'user@example.com';
 ```
 
-## Columns
+```sql+sqlite
+select
+  email,
+  top_passwords,
+  top_logins
+from
+  hudsonrock_email_search
+where
+  email = 'user@example.com';
+```
 
-| Name                    | Type    | Description                                      |
-|-------------------------|---------|--------------------------------------------------|
-| email                   | string  | Email searched.                                  |
-| message                 | string  | API message about the email.                     |
-| date_compromised        | timestamp | Date the credentials were compromised.           |
-| stealer_family          | string  | Infostealer malware family.                      |
-| computer_name           | string  | Name of the infected computer.                   |
-| operating_system        | string  | Operating system of the infected computer.       |
-| malware_path            | string  | Path to the malware on the system.               |
-| antiviruses             | json    | Antivirus software detected.                     |
-| ip                      | string  | IP address of the infected machine.              |
-| top_passwords           | json    | Top passwords found.                             |
-| top_logins              | json    | Top logins found.                                |
-| total_corporate_services| int     | Total corporate services found.                  |
-| total_user_services     | int     | Total user services found.                       |
-| data                    | json    | Raw data from the API response.                  |
+### Get antivirus and malware path details for an email
+
+```sql+postgres
+select
+  email,
+  antiviruses,
+  malware_path
+from
+  hudsonrock_email_search
+where
+  email = 'user@example.com';
+```
+
+```sql+sqlite
+select
+  email,
+  antiviruses,
+  malware_path
+from
+  hudsonrock_email_search
+where
+  email = 'user@example.com';
+```
