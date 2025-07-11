@@ -1,0 +1,106 @@
+package api
+
+import (
+	"net/url"
+)
+
+// Define response struct
+type DomainSearchResponse struct {
+	Total                   int                `json:"total"`
+	TotalStealers           int64              `json:"totalStealers"`
+	Employees               int                `json:"employees"`
+	Users                   int                `json:"users"`
+	ThirdParties            int                `json:"third_parties"`
+	Logo                    string             `json:"logo"`
+	TotalUrls               int                `json:"totalUrls"`
+	Stats                   Stats              `json:"stats"`
+	IsShopify               bool               `json:"is_shopify"`
+	LastEmployeeCompromised string             `json:"last_employee_compromised"`
+	LastUserCompromised     string             `json:"last_user_compromised"`
+	Antiviruses             Antiviruses        `json:"antiviruses"`
+	Applications            []Application      `json:"applications"`
+	EmployeePasswords       PasswordStats      `json:"employeePasswords"`
+	UserPasswords           PasswordStats      `json:"userPasswords"`
+	ThirdPartyDomains       []DomainOccurrence `json:"thirdPartyDomains"`
+	StealerFamilies         map[string]int     `json:"stealerFamilies"`
+	Data                    DomainSearchData   `json:"data"`
+}
+
+type DomainSearchData struct {
+	EmployeesURLs []URLInfo `json:"employees_urls"`
+	ClientsURLs   []URLInfo `json:"clients_urls"`
+	AllURLs       []URLInfo `json:"all_urls"`
+}
+
+type URLInfo struct {
+	Occurrence int    `json:"occurrence"`
+	Type       string `json:"type"`
+	URL        string `json:"url"`
+}
+
+type Stats struct {
+	TotalEmployees int      `json:"totalEmployees"`
+	TotalUsers     int      `json:"totalUsers"`
+	EmployeesURLs  []string `json:"employees_urls"`
+	ClientsURLs    []string `json:"clients_urls"`
+	EmployeesCount []int    `json:"employees_count"`
+	ClientsCount   []int    `json:"clients_count"`
+}
+
+type Antiviruses struct {
+	Total    int         `json:"total"`
+	Found    float64     `json:"found"`
+	NotFound float64     `json:"not_found"`
+	Free     float64     `json:"free"`
+	List     []AVProduct `json:"list"`
+}
+
+type AVProduct struct {
+	Count int    `json:"count"`
+	Name  string `json:"name"`
+}
+
+type Application struct {
+	Keyword string `json:"keyword"`
+}
+
+type PasswordStats struct {
+	TotalPass int         `json:"totalPass"`
+	HasStats  bool        `json:"has_stats"`
+	TooWeak   PasswordBin `json:"too_weak"`
+	Weak      PasswordBin `json:"weak"`
+	Medium    PasswordBin `json:"medium"`
+	Strong    PasswordBin `json:"strong"`
+}
+
+type PasswordBin struct {
+	Qty  int     `json:"qty"`
+	Perc float64 `json:"perc"`
+}
+
+type DomainOccurrence struct {
+	Occurrence int     `json:"occurrence"`
+	Domain     *string `json:"domain"` // pointer to handle nulls
+}
+
+func (c *Client) DomainSearch(domain string) (DomainSearchResponse, error) {
+	urlpath := c.buildURL("/api/json/v2/osint-tools/search-by-domain")
+
+	endpoint, err := url.Parse(BaseURL)
+	if err != nil {
+		return DomainSearchResponse{}, err
+	}
+	endpoint.Path = urlpath
+	query := endpoint.Query()
+	query.Set("domain", domain)
+	endpoint.RawQuery = query.Encode()
+
+	var result DomainSearchResponse
+
+	_, err = c.Resty.R().SetHeader("Accept", "application/json").SetResult(&result).Get(endpoint.String())
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}

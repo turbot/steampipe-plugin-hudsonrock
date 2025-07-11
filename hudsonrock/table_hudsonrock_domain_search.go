@@ -2,13 +2,13 @@ package hudsonrock
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
+	"github.com/turbot/steampipe-plugin-hudsonrock/api"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/query_cache"
 )
 
 func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
@@ -17,7 +17,7 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 		Description: "Search for domain-related cybercrime and infostealer intelligence using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "domain", Require: plugin.Required},
+				{Name: "domain", Require: plugin.Required, CacheMatch: query_cache.CacheMatchExact},
 			},
 			Hydrate: listHudsonrockDomainSearch,
 		},
@@ -32,14 +32,15 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 			{Name: "total_urls", Type: proto.ColumnType_INT, Description: "Total number of unique URLs associated with the domain."},
 			{Name: "stats", Type: proto.ColumnType_JSON, Description: "Statistical breakdown of employees and users, including top URLs and counts."},
 			{Name: "is_shopify", Type: proto.ColumnType_BOOL, Description: "Indicates if the domain is a Shopify store."},
-			{Name: "last_employee_compromised", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of the last employee compromise for the domain."},
-			{Name: "last_user_compromised", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp of the last user compromise for the domain."},
+			{Name: "last_employee_compromised", Type: proto.ColumnType_STRING, Description: "Timestamp of the last employee compromise for the domain."},
+			{Name: "last_user_compromised", Type: proto.ColumnType_STRING, Description: "Timestamp of the last user compromise for the domain."},
 			{Name: "antiviruses", Type: proto.ColumnType_JSON, Description: "Antivirus statistics and list of antivirus products found in the dataset."},
 			{Name: "applications", Type: proto.ColumnType_JSON, Description: "List of detected application keywords related to the domain."},
 			{Name: "employee_passwords", Type: proto.ColumnType_JSON, Description: "Password strength statistics for employees of the domain."},
 			{Name: "user_passwords", Type: proto.ColumnType_JSON, Description: "Password strength statistics for users of the domain."},
 			{Name: "third_party_domains", Type: proto.ColumnType_JSON, Description: "List of third-party domains associated with the main domain, with occurrence counts."},
 			{Name: "stealer_families", Type: proto.ColumnType_JSON, Description: "Breakdown of stealer malware families found in the dataset for the domain."},
+			{Name: "result", Type: proto.ColumnType_JSON, Description: "Breakdown of stealer malware families found in the dataset for the domain.", Transform: transform.FromValue()},
 		},
 	}
 }
@@ -50,66 +51,14 @@ func listHudsonrockDomainSearch(ctx context.Context, d *plugin.QueryData, _ *plu
 		return nil, nil
 	}
 
-	url := "https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-domain?domain=" + domain
-	resp, err := http.Get(url)
+	client := api.NewClient()
+	result, err := client.DomainSearch(domain)
 	if err != nil {
 		return nil, fmt.Errorf("API request failed: %w", err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		b, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("API error: %s - %s", resp.Status, string(b))
-	}
+	plugin.Logger(ctx).Error("listHudsonrockDomainSearch", "connection_error", result.Total)
 
-	type DomainSearchResponse struct {
-		Total                   int                      `json:"total"`
-		TotalStealers           int                      `json:"totalStealers"`
-		Employees               int                      `json:"employees"`
-		Users                   int                      `json:"users"`
-		ThirdParties            int                      `json:"third_parties"`
-		Logo                    string                   `json:"logo"`
-		TotalUrls               int                      `json:"totalUrls"`
-		Stats                   map[string]interface{}   `json:"stats"`
-		IsShopify               bool                     `json:"is_shopify"`
-		LastEmployeeCompromised string                   `json:"last_employee_compromised"`
-		LastUserCompromised     string                   `json:"last_user_compromised"`
-		Antiviruses             map[string]interface{}   `json:"antiviruses"`
-		Applications            []map[string]interface{} `json:"applications"`
-		EmployeePasswords       map[string]interface{}   `json:"employeePasswords"`
-		UserPasswords           map[string]interface{}   `json:"userPasswords"`
-		ThirdPartyDomains       []map[string]interface{} `json:"thirdPartyDomains"`
-		StealerFamilies         map[string]interface{}   `json:"stealerFamilies"`
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %w", err)
-	}
-	var result DomainSearchResponse
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, fmt.Errorf("failed to decode response: %w", err)
-	}
-
-	d.StreamListItem(ctx, map[string]interface{}{
-		"domain":                    domain,
-		"total":                     result.Total,
-		"total_stealers":            result.TotalStealers,
-		"employees":                 result.Employees,
-		"users":                     result.Users,
-		"third_parties":             result.ThirdParties,
-		"logo":                      result.Logo,
-		"total_urls":                result.TotalUrls,
-		"stats":                     result.Stats,
-		"is_shopify":                result.IsShopify,
-		"last_employee_compromised": result.LastEmployeeCompromised,
-		"last_user_compromised":     result.LastUserCompromised,
-		"antiviruses":               result.Antiviruses,
-		"applications":              result.Applications,
-		"employee_passwords":        result.EmployeePasswords,
-		"user_passwords":            result.UserPasswords,
-		"third_party_domains":       result.ThirdPartyDomains,
-		"stealer_families":          result.StealerFamilies,
-	})
+	d.StreamListItem(ctx, result)
 	return nil, nil
 }

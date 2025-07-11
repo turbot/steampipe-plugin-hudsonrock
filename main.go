@@ -1,7 +1,7 @@
 package main
 
 import (
-	"steampipe-plugin-hudsonrock/hudsonrock"
+	"github.com/turbot/steampipe-plugin-hudsonrock/hudsonrock"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )

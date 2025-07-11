@@ -1,8 +1,11 @@
-module steampipe-plugin-hudsonrock
+module github.com/turbot/steampipe-plugin-hudsonrock
 
 go 1.24.5
 
-require github.com/turbot/steampipe-plugin-sdk/v5 v5.7.0
+require (
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.7.0
+	resty.dev/v3 v3.0.0-beta.3
+)
 
 require (
 	cloud.google.com/go v0.110.7 // indirect
@@ -86,13 +89,13 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v0.40.0 // indirect
 	go.opentelemetry.io/otel/trace v1.21.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
-	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
-	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/sys v0.14.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.126.0 // indirect
