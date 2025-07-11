@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -55,7 +55,7 @@ func listHudsonrockUsernameSearch(ctx context.Context, d *plugin.QueryData, _ *p
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		b, _ := ioutil.ReadAll(resp.Body)
+		b, _ := io.ReadAll(resp.Body)
 		return nil, fmt.Errorf("API error: %s - %s", resp.Status, string(b))
 	}
 
@@ -78,7 +78,7 @@ func listHudsonrockUsernameSearch(ctx context.Context, d *plugin.QueryData, _ *p
 		TotalUserServices      int `json:"total_user_services"`
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response: %w", err)
 	}
