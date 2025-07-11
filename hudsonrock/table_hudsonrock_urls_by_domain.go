@@ -26,7 +26,6 @@ func tableHudsonrockUrlsByDomain(_ context.Context) *plugin.Table {
 			{Name: "message", Type: proto.ColumnType_STRING, Description: "API message about the domain."},
 			{Name: "employees_urls", Type: proto.ColumnType_JSON, Description: "List of employee URLs from the API response."},
 			{Name: "clients_urls", Type: proto.ColumnType_JSON, Description: "List of client URLs from the API response."},
-			{Name: "data", Type: proto.ColumnType_JSON, Description: "Raw data from the API response."},
 		},
 	}
 }
@@ -70,7 +69,6 @@ func listHudsonrockUrlsByDomain(ctx context.Context, d *plugin.QueryData, _ *plu
 		"message":        result.Message,
 		"employees_urls": result.Data.EmployeesUrls,
 		"clients_urls":   result.Data.ClientsUrls,
-		"data":           result.Data,
 	})
 	return nil, nil
 }

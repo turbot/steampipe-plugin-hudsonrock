@@ -24,7 +24,13 @@ func tableHudsonrockIpSearch(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			{Name: "ip", Type: proto.ColumnType_STRING, Description: "IP address searched."},
 			{Name: "message", Type: proto.ColumnType_STRING, Description: "API message about the IP address."},
-			{Name: "stealers", Type: proto.ColumnType_JSON, Description: "Stealer data from the API response."},
+			{Name: "date_compromised", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp when the computer was compromised."},
+			{Name: "computer_name", Type: proto.ColumnType_STRING, Description: "Name of the infected computer."},
+			{Name: "operating_system", Type: proto.ColumnType_STRING, Description: "Operating system of the infected computer."},
+			{Name: "malware_path", Type: proto.ColumnType_STRING, Description: "File path of the detected malware on the infected computer."},
+			{Name: "antiviruses", Type: proto.ColumnType_JSON, Description: "List of antivirus products found on the infected computer."},
+			{Name: "top_passwords", Type: proto.ColumnType_JSON, Description: "Top passwords found on the infected computer."},
+			{Name: "top_logins", Type: proto.ColumnType_JSON, Description: "Top logins found on the infected computer."},
 			{Name: "total_corporate_services", Type: proto.ColumnType_INT, Description: "Total corporate services found."},
 			{Name: "total_user_services", Type: proto.ColumnType_INT, Description: "Total user services found."},
 		},
@@ -50,10 +56,21 @@ func listHudsonrockIpSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.
 	}
 
 	var result struct {
-		Message                string      `json:"message"`
-		Stealers               interface{} `json:"stealers"`
-		TotalCorporateServices int         `json:"total_corporate_services"`
-		TotalUserServices      int         `json:"total_user_services"`
+		Message  string `json:"message"`
+		Stealers []struct {
+			TotalCorporateServices int      `json:"total_corporate_services"`
+			TotalUserServices      int      `json:"total_user_services"`
+			DateCompromised        string   `json:"date_compromised"`
+			Ip                     string   `json:"ip"`
+			ComputerName           string   `json:"computer_name"`
+			OperatingSystem        string   `json:"operating_system"`
+			MalwarePath            string   `json:"malware_path"`
+			Antiviruses            []string `json:"antiviruses"`
+			TopPasswords           []string `json:"top_passwords"`
+			TopLogins              []string `json:"top_logins"`
+		} `json:"stealers"`
+		TotalCorporateServices int `json:"total_corporate_services"`
+		TotalUserServices      int `json:"total_user_services"`
 	}
 
 	body, err := io.ReadAll(resp.Body)
@@ -64,12 +81,37 @@ func listHudsonrockIpSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	d.StreamListItem(ctx, map[string]interface{}{
-		"ip":                       ip,
-		"message":                  result.Message,
-		"stealers":                 result.Stealers,
-		"total_corporate_services": result.TotalCorporateServices,
-		"total_user_services":      result.TotalUserServices,
-	})
+	// If there are multiple stealers, stream each as a row; otherwise, stream one row with details or nulls.
+	if len(result.Stealers) > 0 {
+		for _, s := range result.Stealers {
+			d.StreamListItem(ctx, map[string]interface{}{
+				"ip":                       ip,
+				"message":                  result.Message,
+				"date_compromised":         s.DateCompromised,
+				"computer_name":            s.ComputerName,
+				"operating_system":         s.OperatingSystem,
+				"malware_path":             s.MalwarePath,
+				"antiviruses":              s.Antiviruses,
+				"top_passwords":            s.TopPasswords,
+				"top_logins":               s.TopLogins,
+				"total_corporate_services": s.TotalCorporateServices,
+				"total_user_services":      s.TotalUserServices,
+			})
+		}
+	} else {
+		d.StreamListItem(ctx, map[string]interface{}{
+			"ip":                       ip,
+			"message":                  result.Message,
+			"date_compromised":         nil,
+			"computer_name":            nil,
+			"operating_system":         nil,
+			"malware_path":             nil,
+			"antiviruses":              nil,
+			"top_passwords":            nil,
+			"top_logins":               nil,
+			"total_corporate_services": result.TotalCorporateServices,
+			"total_user_services":      result.TotalUserServices,
+		})
+	}
 	return nil, nil
 }

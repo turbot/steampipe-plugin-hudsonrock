@@ -35,7 +35,6 @@ func tableHudsonrockUsernameSearch(_ context.Context) *plugin.Table {
 			{Name: "top_logins", Type: proto.ColumnType_JSON, Description: "Top logins found."},
 			{Name: "total_corporate_services", Type: proto.ColumnType_INT, Description: "Total corporate services found."},
 			{Name: "total_user_services", Type: proto.ColumnType_INT, Description: "Total user services found."},
-			{Name: "data", Type: proto.ColumnType_JSON, Description: "Raw data from the API response."},
 		},
 	}
 }
