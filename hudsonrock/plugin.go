@@ -13,7 +13,7 @@ const pluginName = "steampipe-plugin-hudsonrock"
 func Plugin(ctx context.Context) *plugin.Plugin {
 	return &plugin.Plugin{
 		Name:             pluginName,
-		DefaultTransform: transform.FromCamel(),
+		DefaultTransform: transform.FromGo().NullIfEmptySlice(),
 		TableMap: map[string]*plugin.Table{
 			"hudsonrock_username_search": tableHudsonrockUsernameSearch(ctx),
 			"hudsonrock_email_search":    tableHudsonrockEmailSearch(ctx),

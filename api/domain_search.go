@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/url"
 )
 
@@ -84,22 +85,33 @@ type DomainOccurrence struct {
 }
 
 func (c *Client) DomainSearch(domain string) (DomainSearchResponse, error) {
-	urlpath := c.buildURL("/api/json/v2/osint-tools/search-by-domain")
-
+	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {
 		return DomainSearchResponse{}, err
 	}
-	endpoint.Path = urlpath
+	endpoint.Path = "/api/json/v2/osint-tools/search-by-domain"
+
+	// Add query parameters
 	query := endpoint.Query()
 	query.Set("domain", domain)
 	endpoint.RawQuery = query.Encode()
 
 	var result DomainSearchResponse
 
-	_, err = c.Resty.R().SetHeader("Accept", "application/json").SetResult(&result).Get(endpoint.String())
+	// Make the request with proper error handling
+	resp, err := c.Resty.R().
+		SetHeader("Accept", "application/json").
+		SetResult(&result).
+		Get(endpoint.String())
+
 	if err != nil {
 		return result, err
+	}
+
+	// Handle HTTP errors
+	if resp.IsError() {
+		return result, fmt.Errorf("HTTP error: %s", resp.Status())
 	}
 
 	return result, nil

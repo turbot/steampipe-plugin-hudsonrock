@@ -22,7 +22,7 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 			Hydrate: listHudsonrockDomainSearch,
 		},
 		Columns: []*plugin.Column{
-			{Name: "domain", Type: proto.ColumnType_STRING, Description: "Domain searched."},
+			{Name: "domain", Type: proto.ColumnType_STRING, Description: "Domain searched.", Transform: transform.FromQual("domain")},
 			{Name: "total", Type: proto.ColumnType_INT, Description: "Total records found."},
 			{Name: "total_stealers", Type: proto.ColumnType_INT, Description: "Total stealers found."},
 			{Name: "employees", Type: proto.ColumnType_INT, Description: "Number of employees."},
@@ -57,7 +57,7 @@ func listHudsonrockDomainSearch(ctx context.Context, d *plugin.QueryData, _ *plu
 		return nil, fmt.Errorf("API request failed: %w", err)
 	}
 
-	plugin.Logger(ctx).Error("listHudsonrockDomainSearch", "connection_error", result.Total)
+	plugin.Logger(ctx).Error("listHudsonrockDomainSearch", "connection_error", result)
 
 	d.StreamListItem(ctx, result)
 	return nil, nil
