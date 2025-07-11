@@ -2,13 +2,12 @@ package hudsonrock
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
+	"github.com/turbot/steampipe-plugin-hudsonrock/api"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableHudsonrockEmailSearch(_ context.Context) *plugin.Table {
@@ -22,7 +21,7 @@ func tableHudsonrockEmailSearch(_ context.Context) *plugin.Table {
 			Hydrate: listHudsonrockEmailSearch,
 		},
 		Columns: []*plugin.Column{
-			{Name: "email", Type: proto.ColumnType_STRING, Description: "Email searched."},
+			{Name: "email", Type: proto.ColumnType_STRING, Description: "Email searched.", Transform: transform.FromQual("email")},
 			{Name: "message", Type: proto.ColumnType_STRING, Description: "API message about the email."},
 			{Name: "date_compromised", Type: proto.ColumnType_TIMESTAMP, Description: "Date the credentials were compromised."},
 			{Name: "stealer_family", Type: proto.ColumnType_STRING, Description: "Infostealer malware family."},
@@ -40,67 +39,21 @@ func tableHudsonrockEmailSearch(_ context.Context) *plugin.Table {
 }
 
 func listHudsonrockEmailSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+
 	email := d.EqualsQuals["email"].GetStringValue()
 	if email == "" {
 		return nil, nil
 	}
 
-	url := "https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-email?email=" + email
-	resp, err := http.Get(url)
+	client := api.NewClient()
+	result, err := client.EmailSearch(email)
 	if err != nil {
 		return nil, fmt.Errorf("API request failed: %w", err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		b, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("API error: %s - %s", resp.Status, string(b))
-	}
+	plugin.Logger(ctx).Error("listHudsonrockDomainSearch", "connection_error", result)
 
-	var result struct {
-		Message  string `json:"message"`
-		Stealers []struct {
-			TotalCorporateServices int      `json:"total_corporate_services"`
-			TotalUserServices      int      `json:"total_user_services"`
-			DateCompromised        string   `json:"date_compromised"`
-			StealerFamily          string   `json:"stealer_family"`
-			ComputerName           string   `json:"computer_name"`
-			OperatingSystem        string   `json:"operating_system"`
-			MalwarePath            string   `json:"malware_path"`
-			Antiviruses            []string `json:"antiviruses"`
-			IP                     string   `json:"ip"`
-			TopPasswords           []string `json:"top_passwords"`
-			TopLogins              []string `json:"top_logins"`
-		} `json:"stealers"`
-		TotalCorporateServices int `json:"total_corporate_services"`
-		TotalUserServices      int `json:"total_user_services"`
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %w", err)
-	}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, fmt.Errorf("failed to decode response: %w", err)
-	}
-
-	for _, s := range result.Stealers {
-		d.StreamListItem(ctx, map[string]interface{}{
-			"email":                    email,
-			"message":                  result.Message,
-			"date_compromised":         s.DateCompromised,
-			"stealer_family":           s.StealerFamily,
-			"computer_name":            s.ComputerName,
-			"operating_system":         s.OperatingSystem,
-			"malware_path":             s.MalwarePath,
-			"antiviruses":              s.Antiviruses,
-			"ip":                       s.IP,
-			"top_passwords":            s.TopPasswords,
-			"top_logins":               s.TopLogins,
-			"total_corporate_services": s.TotalCorporateServices,
-			"total_user_services":      s.TotalUserServices,
-			"data":                     s,
-		})
-	}
+	d.StreamListItem(ctx, result)
 	return nil, nil
+
 }
