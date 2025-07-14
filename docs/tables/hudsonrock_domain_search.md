@@ -138,4 +138,3 @@ from
 where
   domain = 'hp.com';
 ```
-

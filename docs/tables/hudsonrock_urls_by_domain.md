@@ -41,12 +41,12 @@ where
   domain = 'hp.com';
 ```
 
-### List all URLs (employee and client) for a domain in a single array
+### Unnest employee URLs (Postgres)
 
 ```sql+postgres
 select
   domain,
-  all_urls
+  jsonb_array_elements(employees_urls) as employee_url
 from
   hudsonrock_urls_by_domain
 where
@@ -56,33 +56,10 @@ where
 ```sql+sqlite
 select
   domain,
-  all_urls
+  json_each(employees_urls) as employee_url
 from
   hudsonrock_urls_by_domain
 where
   domain = 'hp.com';
 ```
 
-### Get the API message and all data for a domain
-
-```sql+postgres
-select
-  domain,
-  message,
-  data
-from
-  hudsonrock_urls_by_domain
-where
-  domain = 'hp.com';
-```
-
-```sql+sqlite
-select
-  domain,
-  message,
-  data
-from
-  hudsonrock_urls_by_domain
-where
-  domain = 'hp.com';
-```

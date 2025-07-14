@@ -23,11 +23,7 @@ The `hudsonrock_username_search` table provides insights about compromised crede
 select
   username,
   message,
-  date_compromised,
-  stealer_family,
-  computer_name,
-  operating_system,
-  ip
+  stealers
 from
   hudsonrock_username_search
 where
@@ -38,22 +34,19 @@ where
 select
   username,
   message,
-  date_compromised,
-  stealer_family,
-  computer_name,
-  operating_system,
-  ip
+  stealers
 from
   hudsonrock_username_search
 where
   username = 'johndoe';
 ```
 
-### Get all data for a username
+### Unnest stealer details
 
 ```sql+postgres
 select
-  *
+  username,
+  jsonb_array_elements(stealers) as stealer_detail
 from
   hudsonrock_username_search
 where
@@ -62,7 +55,32 @@ where
 
 ```sql+sqlite
 select
-  *
+  username,
+  json_each(stealers) as stealer_detail
+from
+  hudsonrock_username_search
+where
+  username = 'johndoe';
+```
+
+### Get top passwords and logins from the first stealer
+
+```sql+postgres
+select
+  username,
+  stealers->0->'top_passwords' as top_passwords,
+  stealers->0->'top_logins' as top_logins
+from
+  hudsonrock_username_search
+where
+  username = 'johndoe';
+```
+
+```sql+sqlite
+select
+  username,
+  json_extract(stealers, '$[0].top_passwords') as top_passwords,
+  json_extract(stealers, '$[0].top_logins') as top_logins
 from
   hudsonrock_username_search
 where
@@ -74,10 +92,11 @@ where
 ```sql+postgres
 select
   username,
-  top_passwords,
-  top_logins
+  stealer_detail->'top_passwords' as top_passwords,
+  stealer_detail->'top_logins' as top_logins
 from
-  hudsonrock_username_search
+  hudsonrock_username_search,
+  lateral jsonb_array_elements(stealers) as stealer_detail
 where
   username = 'johndoe';
 ```
@@ -85,10 +104,11 @@ where
 ```sql+sqlite
 select
   username,
-  top_passwords,
-  top_logins
+  stealer_detail.value -> '$.top_passwords' as top_passwords,
+  stealer_detail.value -> '$.top_logins' as top_logins
 from
-  hudsonrock_username_search
+  hudsonrock_username_search,
+  json_each(stealers) as stealer_detail
 where
   username = 'johndoe';
 ```
@@ -98,10 +118,11 @@ where
 ```sql+postgres
 select
   username,
-  antiviruses,
-  malware_path
+  stealer_detail->'antiviruses' as antiviruses,
+  stealer_detail->'malware_path' as malware_path
 from
-  hudsonrock_username_search
+  hudsonrock_username_search,
+  lateral jsonb_array_elements(stealers) as stealer_detail
 where
   username = 'johndoe';
 ```
@@ -109,10 +130,11 @@ where
 ```sql+sqlite
 select
   username,
-  antiviruses,
-  malware_path
+  json_extract(stealer_detail.value, '$.antiviruses') as antiviruses,
+  json_extract(stealer_detail.value, '$.malware_path') as malware_path
 from
-  hudsonrock_username_search
+  hudsonrock_username_search,
+  json_each(stealers) as stealer_detail
 where
   username = 'johndoe';
 ```

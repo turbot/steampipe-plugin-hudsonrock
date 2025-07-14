@@ -23,11 +23,7 @@ The `hudsonrock_email_search` table provides insights about compromised credenti
 select
   email,
   message,
-  date_compromised,
-  stealer_family,
-  computer_name,
-  operating_system,
-  ip
+  stealers
 from
   hudsonrock_email_search
 where
@@ -38,24 +34,19 @@ where
 select
   email,
   message,
-  date_compromised,
-  stealer_family,
-  computer_name,
-  operating_system,
-  ip
+  stealers
 from
   hudsonrock_email_search
 where
   email = 'user@example.com';
 ```
 
-### List top passwords and logins for an email
+### Unnest stealer details 
 
 ```sql+postgres
 select
   email,
-  top_passwords,
-  top_logins
+  jsonb_array_elements(stealers) as stealer_detail
 from
   hudsonrock_email_search
 where
@@ -65,32 +56,31 @@ where
 ```sql+sqlite
 select
   email,
-  top_passwords,
-  top_logins
+  json_each(stealers) as stealer_detail
 from
   hudsonrock_email_search
 where
   email = 'user@example.com';
 ```
 
-### Get antivirus and malware path details for an email
+### Get top passwords and logins from the first stealer
 
 ```sql+postgres
 select
   email,
-  antiviruses,
-  malware_path
+  stealers->0->'top_passwords' as top_passwords,
+  stealers->0->'top_logins' as top_logins
 from
   hudsonrock_email_search
 where
-  email = 'user@example.com';
+  email = 'user@example.com';;
 ```
 
 ```sql+sqlite
 select
   email,
-  antiviruses,
-  malware_path
+  json_extract(stealers, '$[0].top_passwords') as top_passwords,
+  json_extract(stealers, '$[0].top_logins') as top_logins
 from
   hudsonrock_email_search
 where

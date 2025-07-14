@@ -23,8 +23,7 @@ The `hudsonrock_ip_search` table provides insights about compromised credentials
 select
   ip,
   message,
-  total_corporate_services,
-  total_user_services
+  stealers
 from
   hudsonrock_ip_search
 where
@@ -35,8 +34,53 @@ where
 select
   ip,
   message,
-  total_corporate_services,
-  total_user_services
+  stealers
+from
+  hudsonrock_ip_search
+where
+  ip = '8.8.8.8';
+```
+
+### Unnest stealer details (Postgres)
+
+```sql+postgres
+select
+  ip,
+  jsonb_array_elements(stealers) as stealer_detail
+from
+  hudsonrock_ip_search
+where
+  ip = '8.8.8.8';
+```
+
+```sql+sqlite
+select
+  ip,
+  json_each(stealers) as stealer_detail
+from
+  hudsonrock_ip_search
+where
+  ip = '8.8.8.8';
+```
+
+### Get top passwords and logins from the first stealer
+
+```sql+postgres
+select
+  ip,
+  json_extract(stealers, '$[0].top_passwords') as top_passwords,
+  json_extract(stealers, '$[0].top_logins') as top_logins
+from
+  hudsonrock_ip_search
+where
+  ip = '8.8.8.8';
+```
+
+```sql+sqlite
+select
+  ip,
+  json_extract(stealers, '$[0].top_passwords') as top_passwords,
+  json_extract(stealers, '$[0].top_logins') as top_logins
 from
   hudsonrock_ip_search
 where
