@@ -54,11 +54,6 @@ func (c *Client) WithMinDelay(minDelay time.Duration) *Client {
 	return c
 }
 
-// buildURL constructs the full URL for an API endpoint path.
-func (c *Client) buildURL(path string) string {
-	return fmt.Sprintf("%s%s", c.BaseURL, path)
-}
-
 // BackoffDelay returns the duration to wait before the next attempt should be
 // made. Returns an error if unable get a duration.
 func (c *Client) BackoffDelay(attempt int, err error) (time.Duration, error) {
