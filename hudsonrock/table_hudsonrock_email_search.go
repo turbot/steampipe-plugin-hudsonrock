@@ -23,7 +23,7 @@ func tableHudsonrockEmailSearch(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			{Name: "email", Type: proto.ColumnType_STRING, Description: "Email searched.", Transform: transform.FromQual("email")},
 			{Name: "message", Type: proto.ColumnType_STRING, Description: "API message about the email."},
-			{Name: "stealers", Type: proto.ColumnType_JSON, Description: "Date the credentials were compromised."},
+			{Name: "stealers", Type: proto.ColumnType_JSON, Description: "List of stealer compromise details for the email."},
 			{Name: "total_corporate_services", Type: proto.ColumnType_INT, Description: "Total corporate services found."},
 			{Name: "total_user_services", Type: proto.ColumnType_INT, Description: "Total user services found."},
 		},
