@@ -1,16 +1,19 @@
 package api
 
 import (
-	"fmt"
+	"context"
 	"net/url"
+
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"resty.dev/v3"
 )
 
 // IPSearchResponse represents the response for an IP compromise search.
 type IPSearchResponse struct {
-	Message                string           `json:"message"`
-	Stealers               []IPStealer      `json:"stealers"`
-	TotalCorporateServices int              `json:"total_corporate_services"`
-	TotalUserServices      int              `json:"total_user_services"`
+	Message                string      `json:"message"`
+	Stealers               []IPStealer `json:"stealers"`
+	TotalCorporateServices int         `json:"total_corporate_services"`
+	TotalUserServices      int         `json:"total_user_services"`
 }
 
 // IPStealer contains details about the infection associated with the IP.
@@ -27,13 +30,13 @@ type IPStealer struct {
 	TopLogins              []string `json:"top_logins"`
 }
 
-func (c *Client) IpSearch(ip string) (IPSearchResponse, error) {
+func (c *Client) IpSearch(ctx context.Context, ip string) (IPSearchResponse, error) {
 	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {
 		return IPSearchResponse{}, err
 	}
-	endpoint.Path = "/api/json/v2/osint-tools/search-by-ip"
+	endpoint.Path = "/api/json/v2/osint-tools/search-by-domain"
 
 	// Add query parameters
 	query := endpoint.Query()
@@ -42,21 +45,25 @@ func (c *Client) IpSearch(ip string) (IPSearchResponse, error) {
 
 	var result IPSearchResponse
 
-	// Make the request with proper error handling
-	resp, err := c.Resty.R().
-		SetHeader("Accept", "application/json").
-		SetResult(&result).
-		Get(endpoint.String())
+	// Create the request function for retry logic
+	requestFunc := func() (*resty.Response, error) {
+		return c.Resty.R().
+			SetHeader("Accept", "application/json").
+			SetResult(&result).
+			Get(endpoint.String())
+	}
 
+	// Execute with client's default retry settings
+	resp, err := c.executeWithRetryDefault(requestFunc)
 	if err != nil {
+		plugin.Logger(ctx).Error("IP search failed", "ip", ip, "error", err)
 		return result, err
 	}
 
-	// Handle HTTP errors
-	if resp.IsError() {
-		return result, fmt.Errorf("HTTP error: %s", resp.Status())
-	}
+	plugin.Logger(ctx).Debug("IP search completed successfully",
+		"ip", ip,
+		"status", resp.StatusCode(),
+		"max_retries", c.MaxRetries)
 
 	return result, nil
 }
-

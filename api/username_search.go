@@ -1,8 +1,11 @@
 package api
 
 import (
-	"fmt"
+	"context"
 	"net/url"
+
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"resty.dev/v3"
 )
 
 // UsernameSearchResponse represents the response for a username compromise search.
@@ -28,7 +31,7 @@ type UsernameStealer struct {
 	TopLogins              []string `json:"top_logins"`
 }
 
-func (c *Client) UsernameSearch(username string) (UsernameSearchResponse, error) {
+func (c *Client) UsernameSearch(ctx context.Context, username string) (UsernameSearchResponse, error) {
 	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {
@@ -43,20 +46,25 @@ func (c *Client) UsernameSearch(username string) (UsernameSearchResponse, error)
 
 	var result UsernameSearchResponse
 
-	// Make the request with proper error handling
-	resp, err := c.Resty.R().
-		SetHeader("Accept", "application/json").
-		SetResult(&result).
-		Get(endpoint.String())
+	// Create the request function for retry logic
+	requestFunc := func() (*resty.Response, error) {
+		return c.Resty.R().
+			SetHeader("Accept", "application/json").
+			SetResult(&result).
+			Get(endpoint.String())
+	}
 
+	// Execute with client's default retry settings
+	resp, err := c.executeWithRetryDefault(requestFunc)
 	if err != nil {
+		plugin.Logger(ctx).Error("username search failed", "username", username, "error", err)
 		return result, err
 	}
 
-	// Handle HTTP errors
-	if resp.IsError() {
-		return result, fmt.Errorf("HTTP error: %s", resp.Status())
-	}
+	plugin.Logger(ctx).Debug("Username search completed successfully",
+		"username", username,
+		"status", resp.StatusCode(),
+		"max_retries", c.MaxRetries)
 
 	return result, nil
 }

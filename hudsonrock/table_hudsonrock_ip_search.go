@@ -2,7 +2,6 @@ package hudsonrock
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/turbot/steampipe-plugin-hudsonrock/api"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -38,9 +37,10 @@ func listHudsonrockIpSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.
 	}
 
 	client := api.NewClient()
-	result, err := client.IpSearch(ip)
+	result, err := client.IpSearch(ctx, ip)
 	if err != nil {
-		return nil, fmt.Errorf("API request failed: %w", err)
+		plugin.Logger(ctx).Error("listHudsonrockIpSearch", "api_error", err)
+		return nil, err
 	}
 
 	plugin.Logger(ctx).Error("listHudsonrockIpSearch", "connection_error", result)

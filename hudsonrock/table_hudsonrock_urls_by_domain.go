@@ -2,7 +2,6 @@ package hudsonrock
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/turbot/steampipe-plugin-hudsonrock/api"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -37,9 +36,10 @@ func listHudsonrockUrlsByDomain(ctx context.Context, d *plugin.QueryData, _ *plu
 	}
 
 	client := api.NewClient()
-	result, err := client.URLsByDomain(domain)
+	result, err := client.URLsByDomain(ctx, domain)
 	if err != nil {
-		return nil, fmt.Errorf("API request failed: %w", err)
+		plugin.Logger(ctx).Error("listHudsonrockUrlsByDomain", "api_error", err)
+		return nil, err
 	}
 
 	plugin.Logger(ctx).Error("listHudsonrockUrlsByDomain", "connection_error", result)

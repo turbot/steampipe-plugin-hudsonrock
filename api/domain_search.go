@@ -1,8 +1,11 @@
 package api
 
 import (
-	"fmt"
+	"context"
 	"net/url"
+
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"resty.dev/v3"
 )
 
 // Define response struct
@@ -84,7 +87,7 @@ type DomainOccurrence struct {
 	Domain     *string `json:"domain"` // pointer to handle nulls
 }
 
-func (c *Client) DomainSearch(domain string) (DomainSearchResponse, error) {
+func (c *Client) DomainSearch(ctx context.Context, domain string) (DomainSearchResponse, error) {
 	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {
@@ -99,20 +102,26 @@ func (c *Client) DomainSearch(domain string) (DomainSearchResponse, error) {
 
 	var result DomainSearchResponse
 
-	// Make the request with proper error handling
-	resp, err := c.Resty.R().
-		SetHeader("Accept", "application/json").
-		SetResult(&result).
-		Get(endpoint.String())
+	// Create the request function for retry logic
+	requestFunc := func() (*resty.Response, error) {
+		return c.Resty.R().
+			SetHeader("Accept", "application/json").
+			SetResult(&result).
+			Get(endpoint.String())
+	}
 
+	// Execute with client's default retry settings
+	resp, err := c.executeWithRetryDefault(requestFunc)
 	if err != nil {
+		plugin.Logger(ctx).Error("Domain search failed", "domain", domain, "error", err)
 		return result, err
 	}
 
-	// Handle HTTP errors
-	if resp.IsError() {
-		return result, fmt.Errorf("HTTP error: %s", resp.Status())
-	}
+	plugin.Logger(ctx).Debug("Domain search completed successfully",
+		"domain", domain,
+		"status", resp.StatusCode(),
+		"total_results", result.Total,
+		"max_retries", c.MaxRetries)
 
 	return result, nil
 }

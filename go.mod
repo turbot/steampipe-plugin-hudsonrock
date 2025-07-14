@@ -3,7 +3,6 @@ module github.com/turbot/steampipe-plugin-hudsonrock
 go 1.24.5
 
 require (
-	github.com/turbot/steampipe-plugin-sdk v1.8.3
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.7.0
 	resty.dev/v3 v3.0.0-beta.3
 )

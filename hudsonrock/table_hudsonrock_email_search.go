@@ -2,7 +2,6 @@ package hudsonrock
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/turbot/steampipe-plugin-hudsonrock/api"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -39,9 +38,10 @@ func listHudsonrockEmailSearch(ctx context.Context, d *plugin.QueryData, _ *plug
 	}
 
 	client := api.NewClient()
-	result, err := client.EmailSearch(email)
+	result, err := client.EmailSearch(ctx, email)
 	if err != nil {
-		return nil, fmt.Errorf("API request failed: %w", err)
+		plugin.Logger(ctx).Error("listHudsonrockEmailSearch", "api_error", err)
+		return nil, err
 	}
 
 	d.StreamListItem(ctx, result)

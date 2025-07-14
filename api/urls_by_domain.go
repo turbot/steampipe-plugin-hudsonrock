@@ -1,8 +1,11 @@
 package api
 
 import (
-	"fmt"
+	"context"
 	"net/url"
+
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"resty.dev/v3"
 )
 
 // URLSearchResponse represents the response for URL compromise search.
@@ -17,7 +20,7 @@ type URLDataGroup struct {
 	ClientsURLs   []URLInfo `json:"clients_urls"`
 }
 
-func (c *Client) URLsByDomain(domain string) (URLSearchResponse, error) {
+func (c *Client) URLsByDomain(ctx context.Context, domain string) (URLSearchResponse, error) {
 	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {
@@ -32,20 +35,25 @@ func (c *Client) URLsByDomain(domain string) (URLSearchResponse, error) {
 
 	var result URLSearchResponse
 
-	// Make the request with proper error handling
-	resp, err := c.Resty.R().
-		SetHeader("Accept", "application/json").
-		SetResult(&result).
-		Get(endpoint.String())
+	// Create the request function for retry logic
+	requestFunc := func() (*resty.Response, error) {
+		return c.Resty.R().
+			SetHeader("Accept", "application/json").
+			SetResult(&result).
+			Get(endpoint.String())
+	}
 
+	// Execute with client's default retry settings
+	resp, err := c.executeWithRetryDefault(requestFunc)
 	if err != nil {
+		plugin.Logger(ctx).Error("Domain search failed", "domain", domain, "error", err)
 		return result, err
 	}
 
-	// Handle HTTP errors
-	if resp.IsError() {
-		return result, fmt.Errorf("HTTP error: %s", resp.Status())
-	}
+	plugin.Logger(ctx).Debug("Domain search completed successfully",
+		"domain", domain,
+		"status", resp.StatusCode(),
+		"max_retries", c.MaxRetries)
 
 	return result, nil
 }
