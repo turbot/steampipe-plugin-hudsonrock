@@ -36,7 +36,7 @@ type DomainSearchData struct {
 type URLInfo struct {
 	Occurrence int    `json:"occurrence"`
 	Type       string `json:"type"`
-	URL        string `json:"url"`
+	URL        string `json:"H"`
 }
 
 type Stats struct {

@@ -40,7 +40,6 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 			{Name: "user_passwords", Type: proto.ColumnType_JSON, Description: "Password strength statistics for users of the domain."},
 			{Name: "third_party_domains", Type: proto.ColumnType_JSON, Description: "List of third-party domains associated with the main domain, with occurrence counts."},
 			{Name: "stealer_families", Type: proto.ColumnType_JSON, Description: "Breakdown of stealer malware families found in the dataset for the domain."},
-			{Name: "result", Type: proto.ColumnType_JSON, Description: "Breakdown of stealer malware families found in the dataset for the domain.", Transform: transform.FromValue()},
 		},
 	}
 }

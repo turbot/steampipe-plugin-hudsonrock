@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"resty.dev/v3"
 )
 
@@ -20,9 +18,4 @@ func NewClient() *Client {
 		Resty:   resty.New(),
 		BaseURL: BaseURL,
 	}
-}
-
-// buildURL constructs the full URL for an API endpoint path.
-func (c *Client) buildURL(path string) string {
-	return fmt.Sprintf("%s%s", c.BaseURL, path)
 }
