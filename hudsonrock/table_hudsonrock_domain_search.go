@@ -39,9 +39,13 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 			{Name: "user_passwords", Type: proto.ColumnType_JSON, Description: "Password strength statistics for users of the domain."},
 			{Name: "third_party_domains", Type: proto.ColumnType_JSON, Description: "List of third-party domains associated with the main domain, with occurrence counts."},
 			{Name: "stealer_families", Type: proto.ColumnType_JSON, Description: "Breakdown of stealer malware families found in the dataset for the domain."},
+			{Name: "employees_urls", Type: proto.ColumnType_JSON, Description: "List of URLs associated with employees for the given domain.", Transform: transform.FromField("Data.EmployeesURLs")},
+			{Name: "clients_urls", Type: proto.ColumnType_JSON, Description: "List of URLs associated with clients for the given domain.", Transform: transform.FromField("Data.ClientsURLs")},
+			{Name: "all_urls", Type: proto.ColumnType_JSON, Description: "List of all URLs (employees and clients) associated with the given domain.", Transform: transform.FromField("Data.AllURLs")},
 		},
 	}
 }
+
 
 func listHudsonrockDomainSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	domain := d.EqualsQuals["domain"].GetStringValue()

@@ -11,13 +11,13 @@ import (
 // Define response struct
 type EmailSearchResponse struct {
 	Message                string           `json:"message"`
-	Stealers               []StealerDetails `json:"stealers"`
+	Stealers               []EmailStealer `json:"stealers"`
 	TotalCorporateServices int              `json:"total_corporate_services"`
 	TotalUserServices      int              `json:"total_user_services"`
 }
 
-// StealerDetails contains information about each stealer compromise.
-type StealerDetails struct {
+// EmailStealer contains information about each stealer compromise.
+type EmailStealer struct {
 	TotalCorporateServices int      `json:"total_corporate_services"`
 	TotalUserServices      int      `json:"total_user_services"`
 	DateCompromised        string   `json:"date_compromised"`

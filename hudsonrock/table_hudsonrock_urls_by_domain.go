@@ -23,8 +23,9 @@ func tableHudsonrockUrlsByDomain(_ context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			{Name: "domain", Type: proto.ColumnType_STRING, Description: "Domain searched.", Transform: transform.FromQual("domain")},
 			{Name: "message", Type: proto.ColumnType_STRING, Description: "API message about the domain."},
-			{Name: "employees_urls", Type: proto.ColumnType_JSON, Description: "List of employee URLs from the API response.", Transform: transform.FromField("Data.EmployeesURLs")},
-			{Name: "clients_urls", Type: proto.ColumnType_JSON, Description: "List of client URLs from the API response.", Transform: transform.FromField("Data.ClientsURLs")},
+			{Name: "employees_urls", Type: proto.ColumnType_JSON, Description: "List of URLs associated with employees for the given domain.", Transform: transform.FromField("Data.EmployeesURLs")},
+			{Name: "clients_urls", Type: proto.ColumnType_JSON, Description: "List of URLs associated with clients for the given domain.", Transform: transform.FromField("Data.ClientsURLs")},
+			{Name: "all_urls", Type: proto.ColumnType_JSON, Description: "List of all URLs (employees and clients) associated with the given domain.", Transform: transform.FromField("Data.AllURLs")},
 		},
 	}
 }

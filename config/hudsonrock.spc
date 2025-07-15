@@ -1,3 +1,4 @@
 connection "hudsonrock" {
   plugin = "hudsonrock"
+  
 }

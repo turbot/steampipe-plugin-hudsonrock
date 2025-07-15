@@ -36,7 +36,7 @@ func (c *Client) IpSearch(ctx context.Context, ip string) (IPSearchResponse, err
 	if err != nil {
 		return IPSearchResponse{}, err
 	}
-	endpoint.Path = "/api/json/v2/osint-tools/search-by-domain"
+	endpoint.Path = "/api/json/v2/osint-tools/search-by-ip"
 
 	// Add query parameters
 	query := endpoint.Query()
