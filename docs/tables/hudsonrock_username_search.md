@@ -23,7 +23,10 @@ The `hudsonrock_username_search` table provides insights about compromised crede
 select
   username,
   message,
-  stealers
+  top_passwords,
+  top_logins,
+  antiviruses,
+  malware_path
 from
   hudsonrock_username_search
 where
@@ -34,107 +37,90 @@ where
 select
   username,
   message,
-  stealers
+  top_passwords,
+  top_logins,
+  antiviruses,
+  malware_path
 from
   hudsonrock_username_search
 where
   username = 'johndoe';
 ```
 
-### Unnest stealer details
+#### Find usernames with more than 3 top passwords
 
 ```sql+postgres
 select
   username,
-  jsonb_array_elements(stealers) as stealer_detail
+  top_passwords,
+  jsonb_array_length(top_passwords) as num_passwords
 from
   hudsonrock_username_search
 where
-  username = 'johndoe';
+  username = 'johndoe'
+  and jsonb_array_length(top_passwords) > 3;
 ```
 
 ```sql+sqlite
 select
   username,
-  json_each(stealers) as stealer_detail
+  top_passwords,
+  json_array_length(top_passwords) as num_passwords
 from
   hudsonrock_username_search
 where
-  username = 'johndoe';
+  username = 'johndoe'
+  and json_array_length(top_passwords) > 3;
 ```
 
-### Get top passwords and logins from the first stealer
+#### Search for a specific antivirus in the antiviruses array
 
 ```sql+postgres
 select
   username,
-  stealers->0->'top_passwords' as top_passwords,
-  stealers->0->'top_logins' as top_logins
+  antiviruses
 from
   hudsonrock_username_search
 where
-  username = 'johndoe';
+  username = 'johndoe'
+  and antiviruses::text ilike '%Kaspersky%';
 ```
 
 ```sql+sqlite
 select
   username,
-  json_extract(stealers, '$[0].top_passwords') as top_passwords,
-  json_extract(stealers, '$[0].top_logins') as top_logins
+  antiviruses
+from
+  hudsonrock_username_search,
+  json_each(hudsonrock_username_search.antiviruses)
+where
+  ip = '8.8.8.8'
+  and lower(json_each.value) = 'kaspersky';;
+```
+
+#### Order by number of top passwords (descending)
+
+```sql+postgres
+select
+  username,
+  top_passwords,
+  jsonb_array_length(top_passwords) as num_passwords
 from
   hudsonrock_username_search
 where
-  username = 'johndoe';
-```
-
-### List top passwords and logins for a username
-
-```sql+postgres
-select
-  username,
-  stealer_detail->'top_passwords' as top_passwords,
-  stealer_detail->'top_logins' as top_logins
-from
-  hudsonrock_username_search,
-  lateral jsonb_array_elements(stealers) as stealer_detail
-where
-  username = 'johndoe';
+  username = 'johndoe'
+order by
+  num_passwords desc;
 ```
 
 ```sql+sqlite
 select
   username,
-  stealer_detail.value -> '$.top_passwords' as top_passwords,
-  stealer_detail.value -> '$.top_logins' as top_logins
+  top_passwords,
+  json_array_length(top_passwords) as num_passwords
 from
-  hudsonrock_username_search,
-  json_each(stealers) as stealer_detail
+  hudsonrock_username_search
 where
-  username = 'johndoe';
-```
-
-### Get antivirus and malware path details for a username
-
-```sql+postgres
-select
-  username,
-  stealer_detail->'antiviruses' as antiviruses,
-  stealer_detail->'malware_path' as malware_path
-from
-  hudsonrock_username_search,
-  lateral jsonb_array_elements(stealers) as stealer_detail
-where
-  username = 'johndoe';
-```
-
-```sql+sqlite
-select
-  username,
-  json_extract(stealer_detail.value, '$.antiviruses') as antiviruses,
-  json_extract(stealer_detail.value, '$.malware_path') as malware_path
-from
-  hudsonrock_username_search,
-  json_each(stealers) as stealer_detail
-where
-  username = 'johndoe';
+  username = 'johndoe'
+order by num_passwords desc;
 ```

@@ -23,7 +23,10 @@ The `hudsonrock_ip_search` table provides insights about compromised credentials
 select
   ip,
   message,
-  stealers
+  top_passwords,
+  top_logins,
+  antiviruses,
+  malware_path
 from
   hudsonrock_ip_search
 where
@@ -34,75 +37,10 @@ where
 select
   ip,
   message,
-  stealers
-from
-  hudsonrock_ip_search
-where
-  ip = '8.8.8.8';
-```
-
-### Unnest stealer details (Postgres)
-
-```sql+postgres
-select
-  ip,
-  jsonb_array_elements(stealers) as stealer_detail
-from
-  hudsonrock_ip_search
-where
-  ip = '8.8.8.8';
-```
-
-```sql+sqlite
-select
-  ip,
-  json_each(stealers) as stealer_detail
-from
-  hudsonrock_ip_search
-where
-  ip = '8.8.8.8';
-```
-
-### Get top passwords and logins from the first stealer
-
-```sql+postgres
-select
-  ip,
-  json_extract(stealers, '$[0].top_passwords') as top_passwords,
-  json_extract(stealers, '$[0].top_logins') as top_logins
-from
-  hudsonrock_ip_search
-where
-  ip = '8.8.8.8';
-```
-
-```sql+sqlite
-select
-  ip,
-  json_extract(stealers, '$[0].top_passwords') as top_passwords,
-  json_extract(stealers, '$[0].top_logins') as top_logins
-from
-  hudsonrock_ip_search
-where
-  ip = '8.8.8.8';
-```
-
-### List stealer data for an IP
-
-```sql+postgres
-select
-  ip,
-  stealers
-from
-  hudsonrock_ip_search
-where
-  ip = '8.8.8.8';
-```
-
-```sql+sqlite
-select
-  ip,
-  stealers
+  top_passwords,
+  top_logins,
+  antiviruses,
+  malware_path
 from
   hudsonrock_ip_search
 where
@@ -141,4 +79,79 @@ from
   hudsonrock_ip_search
 where
   ip = '8.8.8.8';
+```
+
+#### Find IPs with more than 3 top passwords
+
+```sql+postgres
+select
+  ip,
+  top_passwords,
+  jsonb_array_length(top_passwords) as num_passwords
+from
+  hudsonrock_ip_search
+where
+  ip = '8.8.8.8'
+  and jsonb_array_length(top_passwords) > 3;
+```
+
+```sql+sqlite
+select
+  ip,
+  top_passwords,
+  json_array_length(top_passwords) AS num_passwords
+from
+  hudsonrock_ip_search
+where
+  ip = '8.8.8.8'
+  and json_array_length(top_passwords) > 3;
+```
+
+#### Search for a specific antivirus in the antiviruses array
+
+```sql+postgres
+select
+  ip,
+  antiviruses
+from
+  hudsonrock_ip_search
+where
+  ip = '8.8.8.8'
+  and antiviruses::text ilike '%Kaspersky%';
+```
+
+```sql+sqlite
+select
+  ip,
+  antiviruses
+from
+  hudsonrock_ip_search,
+  json_each(hudsonrock_ip_search.antiviruses)
+where
+  ip = '8.8.8.8'
+  and lower(json_each.value) = 'kaspersky';;
+```
+
+#### Order by number of top passwords (descending)
+
+```sql+postgres
+select
+  ip,
+  top_passwords,
+  json_array_length(top_passwords) AS num_passwords
+from
+  hudsonrock_ip_search
+order by
+  num_passwords desc;
+```
+
+```sql+sqlite
+select
+  ip,
+  top_passwords,
+  json_array_length(top_passwords) AS num_passwords
+from
+  hudsonrock_ip_search
+order by
+  num_passwords desc;
 ```

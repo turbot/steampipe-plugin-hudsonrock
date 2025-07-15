@@ -41,7 +41,7 @@ where
   domain = 'hp.com';
 ```
 
-### Unnest employee URLs (Postgres)
+### Unnest employee URLs
 
 ```sql+postgres
 select
@@ -61,5 +61,89 @@ from
   hudsonrock_urls_by_domain
 where
   domain = 'hp.com';
+```
+
+#### Find domains with more than 5 employee URLs
+
+```sql+postgres
+select
+  domain,
+  employees_urls,
+  jsonb_array_length(employees_urls) as num_employee_urls
+from
+  hudsonrock_urls_by_domain
+where
+  domain = 'hp.com'
+  and jsonb_array_length(employees_urls) > 5;
+```
+
+```sql+sqlite
+select
+  domain,
+  employees_urls,
+  json_array_length(employees_urls) AS num_employee_urls
+from
+  hudsonrock_urls_by_domain
+where
+  domain = 'hp.com'
+  and json_array_length(employees_urls) > 5;
+```
+
+#### Search for a specific substring in any employee URL
+
+```sql+postgres
+select
+  domain,
+  employees_urls
+from
+  hudsonrock_urls_by_domain
+where
+  exists (
+    select 1 from jsonb_array_elements_text(employees_urls) as url where url ilike '%login%'
+  )
+  and domain = 'hp.com';
+```
+
+```sql+sqlite
+select
+  domain,
+  employees_urls
+from
+  hudsonrock_urls_by_domain
+where
+  exists (
+    select 1
+    from jsonb_array_elements_text(employees_urls) AS url
+    where url ILIKE '%login%'
+  )
+  and domain = 'hp.com';
+```
+
+#### Order by number of employee URLs (descending)
+
+```sql+postgres
+select
+  domain,
+  employees_urls,
+  jsonb_array_length(employees_urls) as num_employee_urls
+from
+  hudsonrock_urls_by_domain
+where
+  domain = 'hp.com'
+order by
+  num_employee_urls desc;
+```
+
+```sql+sqlite
+select
+  domain,
+  employees_urls,
+  json_array_length(employees_urls) AS num_employee_urls
+from
+  hudsonrock_urls_by_domain
+where
+  domain = 'hp.com'
+order by
+  num_employee_urls desc;
 ```
 
