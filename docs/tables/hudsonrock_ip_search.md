@@ -19,7 +19,6 @@ The `hudsonrock_ip_search` table provides insights about compromised credentials
 ## Examples
 
 ### Basic IP intelligence
-
 Retrieve essential IP intelligence data to understand the overall compromise status and exposure details for a specific IP address. This query helps in identifying the scope of credential theft, infostealer infections, and the types of sensitive information that may have been exposed from devices associated with this IP.
 
 ```sql+postgres
@@ -51,7 +50,6 @@ where
 ```
 
 ### Get detailed stealer infection analysis
-
 Extract comprehensive details about each infostealer infection associated with an IP address, including compromise timeline, system information, and exposed credentials. This query helps security teams understand the full scope of infections and can guide targeted remediation efforts for specific compromised systems.
 
 ```sql+postgres
@@ -87,7 +85,6 @@ where
 ```
 
 ### High value credential detection
-
 Identify IP addresses with significant credential exposure by filtering for those with more than 3 compromised passwords. This query helps security teams prioritize response efforts by focusing on the most severely compromised systems that may represent higher risk targets.
 
 ```sql+postgres
@@ -115,7 +112,6 @@ where
 ```
 
 ### Antivirus software analysis
-
 Search for specific antivirus software installations across compromised IP addresses to understand the effectiveness of endpoint protection solutions. This query helps in identifying patterns in security tool deployments and can guide improvements in antivirus coverage and configuration.
 
 ```sql+postgres
@@ -142,7 +138,6 @@ where
 ```
 
 ### Credential exposure ranking
-
 Rank IP addresses by the number of compromised passwords to identify the most severely affected systems. This query helps security teams prioritize incident response efforts and can be used to allocate resources based on the severity of credential exposure.
 
 ```sql+postgres
@@ -168,7 +163,6 @@ order by
 ```
 
 ### Comprehensive IP compromise assessment
-
 Perform a complete analysis of all available intelligence data for a compromised IP address. This query provides a holistic view of the compromise, including technical details, exposed credentials, system information, and threat context, enabling comprehensive incident response and remediation planning.
 
 ```sql+postgres
@@ -214,7 +208,6 @@ where
 ```
 
 ### Recent compromise detection
-
 Identify recently compromised IP addresses to prioritize incident response efforts. This query helps security teams focus on the most recent threats and can be used to trigger immediate response procedures for newly discovered compromises.
 
 ```sql+postgres
@@ -250,7 +243,6 @@ order by
 ```
 
 ### Geographic threat intelligence
-
 Extract geographic and network information about compromised IP addresses to understand the attack context and potential threat actor locations. This query helps in threat intelligence analysis and can assist in identifying patterns across multiple compromises.
 
 ```sql+postgres

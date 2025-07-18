@@ -19,7 +19,6 @@ The `hudsonrock_domain_search` table provides insights about a domain, including
 ## Examples
 
 ### Basic domain intelligence
-
 Retrieve essential domain intelligence metrics to understand the overall exposure and compromise statistics for a specific domain. This query helps in identifying the scale of potential security issues, including the number of affected employees, users, and third parties, as well as the total volume of compromised records.
 
 ```sql+postgres
@@ -53,7 +52,6 @@ where
 ```
 
 ### Get domain logo and branding information
-
 Extract the official logo URL for a domain to verify brand authenticity and support visual identification in reports or dashboards. This query is useful for creating branded security reports or integrating domain intelligence into existing security tools.
 
 ```sql+postgres
@@ -77,7 +75,6 @@ where
 ```
 
 ### Get stealer malware family details
-
 Analyze the types of infostealer malware families that have compromised credentials for a specific domain. This query helps security teams understand the threat landscape and prioritize remediation efforts based on the sophistication and capabilities of the malware families involved.
 
 ```sql+postgres
@@ -101,7 +98,6 @@ where
 ```
 
 ### Get password security assessment
-
 Evaluate password strength statistics for both employees and users associated with a domain to identify potential security weaknesses. This query helps in understanding the overall password hygiene and can guide security awareness training priorities and password policy improvements.
 
 ```sql+postgres
@@ -127,7 +123,6 @@ where
 ```
 
 ### Get third-Party domain exposure
-
 Identify and analyze all third-party domains associated with a primary domain to understand the extended attack surface and supply chain risks. This query helps in mapping the broader ecosystem of connected services and identifying potential lateral movement opportunities for attackers.
 
 ```sql+postgres
@@ -151,7 +146,6 @@ where
 ```
 
 ### Get comprehensive domain risk assessment
-
 Perform a complete risk assessment by combining multiple intelligence factors for a domain. This query provides a holistic view of the domain's security posture, including exposure metrics, threat actor activity, and potential attack vectors, enabling informed decision-making for security investments and incident response planning.
 
 ```sql+postgres
@@ -193,7 +187,6 @@ where
 ```
 
 ### High risk domain identification
-
 Identify domains with significant exposure by filtering for high compromise counts. This query helps security teams prioritize their response efforts by focusing on domains with the most severe exposure levels, enabling efficient resource allocation for incident response and remediation activities.
 
 ```sql+postgres

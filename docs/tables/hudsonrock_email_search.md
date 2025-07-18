@@ -19,7 +19,6 @@ The `hudsonrock_email_search` table provides insights about compromised credenti
 ## Examples
 
 ### Basic email intelligence
-
 Retrieve essential email intelligence data to understand the overall compromise status and exposure details for a specific email address. This query helps in identifying the scope of credential theft, infostealer infections, and the types of sensitive information that may have been exposed.
 
 ```sql+postgres
@@ -51,7 +50,6 @@ where
 ```
 
 ### Get top passwords and logins from the first stealer
-
 Extract the most commonly used passwords and login credentials that were stolen from the infected device. This query helps security teams understand the types of credentials that were compromised and can guide password policy enforcement and credential rotation strategies.
 
 ```sql+postgres
@@ -77,7 +75,6 @@ where
 ```
 
 ### Get antiviruses and malware path from the first stealer
-
 Analyze the antivirus software installed on the compromised device and the specific malware infection path. This query helps in understanding the security posture of the infected system and can guide improvements in endpoint protection and malware detection capabilities.
 
 ```sql+postgres
@@ -103,7 +100,6 @@ where
 ```
 
 ### Comprehensive email compromise assessment
-
 Perform a complete analysis of all available intelligence data for a compromised email address. This query provides a holistic view of the compromise, including technical details, exposed credentials, system information, and threat context, enabling comprehensive incident response and remediation planning.
 
 ```sql+postgres
@@ -151,7 +147,6 @@ where
 ```
 
 ### Geographic and network intelligence
-
 Extract geographic and network information about the compromised device to understand the attack context and potential threat actor location. This query helps in threat intelligence analysis and can assist in identifying patterns across multiple compromises.
 
 ```sql+postgres
@@ -185,7 +180,6 @@ where
 ```
 
 ### Recent compromise detection
-
 Identify recently compromised email addresses to prioritize incident response efforts. This query helps security teams focus on the most recent threats and can be used to trigger immediate response procedures for newly discovered compromises.
 
 ```sql+postgres
@@ -221,7 +215,6 @@ order by
 ```
 
 ### Get stealer family details
-
 Analyze the distribution of infostealer malware families across compromised email addresses to understand the threat landscape. This query helps in identifying the most prevalent malware families and can guide security investments in specific threat detection and prevention capabilities.
 
 ```sql+postgres

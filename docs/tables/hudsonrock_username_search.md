@@ -19,7 +19,6 @@ The `hudsonrock_username_search` table provides insights about compromised crede
 ## Examples
 
 ### Basic username intelligence
-
 Retrieve essential username intelligence data to understand the overall compromise status and exposure details for a specific username. This query helps in identifying the scope of credential theft, infostealer infections, and the types of sensitive information that may have been exposed from accounts associated with this username.
 
 ```sql+postgres
@@ -51,7 +50,6 @@ where
 ```
 
 ### High value credential detection
-
 Identify usernames with significant credential exposure by filtering for those with more than 3 compromised passwords. This query helps security teams prioritize response efforts by focusing on accounts with the most severely compromised credentials that may represent higher risk targets.
 
 ```sql+postgres
@@ -79,7 +77,6 @@ where
 ```
 
 ### Antivirus software analysis
-
 Search for specific antivirus software installations across compromised usernames to understand the effectiveness of endpoint protection solutions. This query helps in identifying patterns in security tool deployments and can guide improvements in antivirus coverage and configuration.
 
 ```sql+postgres
@@ -106,7 +103,6 @@ where
 ```
 
 ### Credential exposure ranking
-
 Rank usernames by the number of compromised passwords to identify the most severely affected accounts. This query helps security teams prioritize incident response efforts and can be used to allocate resources based on the severity of credential exposure.
 
 ```sql+postgres
@@ -135,7 +131,6 @@ order by num_passwords desc;
 ```
 
 ### Comprehensive username compromise assessment
-
 Perform a complete analysis of all available intelligence data for a compromised username. This query provides a holistic view of the compromise, including technical details, exposed credentials, system information, and threat context, enabling comprehensive incident response and remediation planning.
 
 ```sql+postgres
@@ -183,7 +178,6 @@ where
 ```
 
 ### Recent compromise detection
-
 Identify recently compromised usernames to prioritize incident response efforts. This query helps security teams focus on the most recent threats and can be used to trigger immediate response procedures for newly discovered compromises.
 
 ```sql+postgres
@@ -219,7 +213,6 @@ order by
 ```
 
 ### Stealer family analysis
-
 Analyze the distribution of infostealer malware families across compromised usernames to understand the threat landscape. This query helps in identifying the most prevalent malware families and can guide security investments in specific threat detection and prevention capabilities.
 
 ```sql+postgres
