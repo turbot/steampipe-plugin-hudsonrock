@@ -7,7 +7,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	"github.com/turbot/steampipe-plugin-sdk/v5/query_cache"
 )
 
 func tableHudsonrockUrlsByDomain(_ context.Context) *plugin.Table {
@@ -16,7 +15,7 @@ func tableHudsonrockUrlsByDomain(_ context.Context) *plugin.Table {
 		Description: "List URLs identified by infostealer infections for a given domain using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "domain", Require: plugin.Required, CacheMatch: query_cache.CacheMatchExact},
+				{Name: "domain", Require: plugin.Required},
 			},
 			Hydrate: listHudsonrockUrlsByDomain,
 		},
@@ -39,11 +38,9 @@ func listHudsonrockUrlsByDomain(ctx context.Context, d *plugin.QueryData, _ *plu
 	client := api.NewClient()
 	result, err := client.URLsByDomain(ctx, domain)
 	if err != nil {
-		plugin.Logger(ctx).Error("listHudsonrockUrlsByDomain", "api_error", err)
+		plugin.Logger(ctx).Error("hudsonrock_urls_by_domain.listHudsonrockUrlsByDomain", "api_error", err)
 		return nil, err
 	}
-
-	plugin.Logger(ctx).Error("listHudsonrockUrlsByDomain", "connection_error", result)
 
 	d.StreamListItem(ctx, result)
 	return nil, nil

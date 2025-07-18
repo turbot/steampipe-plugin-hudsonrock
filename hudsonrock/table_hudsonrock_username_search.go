@@ -7,7 +7,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	"github.com/turbot/steampipe-plugin-sdk/v5/query_cache"
 )
 
 func tableHudsonrockUsernameSearch(_ context.Context) *plugin.Table {
@@ -16,7 +15,7 @@ func tableHudsonrockUsernameSearch(_ context.Context) *plugin.Table {
 		Description: "Search for compromised credentials and infostealer data by username using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "username", Require: plugin.Required, CacheMatch: query_cache.CacheMatchExact},
+				{Name: "username", Require: plugin.Required},
 			},
 			Hydrate: listHudsonrockUsernameSearch,
 		},
@@ -55,7 +54,7 @@ func listHudsonrockUsernameSearch(ctx context.Context, d *plugin.QueryData, _ *p
 	client := api.NewClient()
 	output, err := client.UsernameSearch(ctx, username)
 	if err != nil {
-		plugin.Logger(ctx).Error("listHudsonrockUsernameSearch", "api_error", err)
+		plugin.Logger(ctx).Error("hudsonrock_username_search.listHudsonrockUsernameSearch", "api_error", err)
 		return nil, err
 	}
 

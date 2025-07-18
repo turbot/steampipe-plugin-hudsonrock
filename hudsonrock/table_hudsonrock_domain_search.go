@@ -7,7 +7,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
-	"github.com/turbot/steampipe-plugin-sdk/v5/query_cache"
 )
 
 func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
@@ -16,7 +15,7 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 		Description: "Search for domain-related cybercrime and infostealer intelligence using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "domain", Require: plugin.Required, CacheMatch: query_cache.CacheMatchExact},
+				{Name: "domain", Require: plugin.Required},
 			},
 			Hydrate: listHudsonrockDomainSearch,
 		},
@@ -46,7 +45,6 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 	}
 }
 
-
 func listHudsonrockDomainSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	domain := d.EqualsQuals["domain"].GetStringValue()
 	if domain == "" {
@@ -56,7 +54,7 @@ func listHudsonrockDomainSearch(ctx context.Context, d *plugin.QueryData, _ *plu
 	client := api.NewClient()
 	result, err := client.DomainSearch(ctx, domain)
 	if err != nil {
-		plugin.Logger(ctx).Error("listHudsonrockDomainSearch", "api_error", err)
+		plugin.Logger(ctx).Error("hudsonrock_domain_search.listHudsonrockDomainSearch", "api_error", err)
 		return nil, err
 	}
 
