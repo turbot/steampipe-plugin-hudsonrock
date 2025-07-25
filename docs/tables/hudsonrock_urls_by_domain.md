@@ -1,7 +1,7 @@
 ---
 title: "Steampipe Table: hudsonrock_urls_by_domain"
 description: "Query Hudson Rock for URLs identified by infostealer infections for a given domain with SQL."
-folder: "URLs"
+folder: "URL"
 ---
 
 # Table: hudsonrock_urls_by_domain - Query URLs Identified by Infostealer Infections for a Domain using SQL

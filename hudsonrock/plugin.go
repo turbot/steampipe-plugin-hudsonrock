@@ -15,11 +15,11 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		Name:             pluginName,
 		DefaultTransform: transform.FromGo().NullIfEmptySlice(),
 		TableMap: map[string]*plugin.Table{
-			"hudsonrock_username_search": tableHudsonrockUsernameSearch(ctx),
-			"hudsonrock_email_search":    tableHudsonrockEmailSearch(ctx),
 			"hudsonrock_domain_search":   tableHudsonrockDomainSearch(ctx),
+			"hudsonrock_email_search":    tableHudsonrockEmailSearch(ctx),
 			"hudsonrock_ip_search":       tableHudsonrockIpSearch(ctx),
 			"hudsonrock_urls_by_domain":  tableHudsonrockUrlsByDomain(ctx),
+			"hudsonrock_username_search": tableHudsonrockUsernameSearch(ctx),
 		},
 	}
 }

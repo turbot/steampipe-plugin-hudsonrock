@@ -12,7 +12,7 @@ import (
 func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "hudsonrock_domain_search",
-		Description: "Search for domain-related cybercrime and infostealer intelligence using Hudson Rock's API.",
+		Description: "Search for domain-related cyber crime and infostealer intelligence using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
 				{Name: "domain", Require: plugin.Required},
