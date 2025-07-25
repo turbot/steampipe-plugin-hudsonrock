@@ -24,7 +24,7 @@ select
   domain,
   total_stealers
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'steampipe.io';
 ```

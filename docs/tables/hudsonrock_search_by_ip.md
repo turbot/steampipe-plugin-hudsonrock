@@ -1,20 +1,20 @@
 ---
-title: "Steampipe Table: hudsonrock_ip_search"
+title: "Steampipe Table: hudsonrock_search_by_ip"
 description: "Query Hudson Rock infostealer and credential data by IP address with SQL."
 folder: "IP"
 ---
 
-# Table: hudsonrock_ip_search - Query Hudson Rock IP Intelligence using SQL
+# Table: hudsonrock_search_by_ip - Query Hudson Rock IP Intelligence using SQL
 
-The `hudsonrock_ip_search` table allows you to query info-stealer and credential data by IP address using the Hudson Rock API. This table provides a detailed view of infostealer infections, password and login exposures, stealer malware details, and more for a given IP address.
+The `hudsonrock_search_by_ip` table allows you to query info-stealer and credential data by IP address using the Hudson Rock API. This table provides a detailed view of infostealer infections, password and login exposures, stealer malware details, and more for a given IP address.
 
 ## Table Usage Guide
 
-The `hudsonrock_ip_search` table provides insights about compromised credentials, infostealer malware, and related data for a given IP address, including compromise date, computer and OS details, malware path, antivirus products, and exposed passwords and logins.
+The `hudsonrock_search_by_ip` table provides insights about compromised credentials, infostealer malware, and related data for a given IP address, including compromise date, computer and OS details, malware path, antivirus products, and exposed passwords and logins.
 
 **Important Notes**
 
-- You must specify the `ip` in the `where` or join clause (`where ip=`, `join hudsonrock_ip_search s on s.ip=`) in order to query this table.
+- You must specify the `ip` in the `where` or join clause (`where ip=`, `join hudsonrock_search_by_ip s on s.ip=`) in order to query this table.
 
 ## Examples
 
@@ -30,7 +30,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```
@@ -44,7 +44,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```
@@ -63,7 +63,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```
@@ -79,7 +79,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```
@@ -93,7 +93,7 @@ select
   top_passwords,
   jsonb_array_length(top_passwords) as num_passwords
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8'
   and jsonb_array_length(top_passwords) > 3;
@@ -105,7 +105,7 @@ select
   top_passwords,
   json_array_length(top_passwords) AS num_passwords
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8'
   and json_array_length(top_passwords) > 3;
@@ -119,7 +119,7 @@ select
   ip,
   antiviruses
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8'
   and antiviruses::text ilike '%Kaspersky%';
@@ -130,8 +130,8 @@ select
   ip,
   antiviruses
 from
-  hudsonrock_ip_search,
-  json_each(hudsonrock_ip_search.antiviruses)
+  hudsonrock_search_by_ip,
+  json_each(hudsonrock_search_by_ip.antiviruses)
 where
   ip = '8.8.8.8'
   and lower(json_each.value) = 'kaspersky';
@@ -146,7 +146,7 @@ select
   top_passwords,
   json_array_length(top_passwords) AS num_passwords
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 order by
   num_passwords desc;
 ```
@@ -157,7 +157,7 @@ select
   top_passwords,
   json_array_length(top_passwords) AS num_passwords
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 order by
   num_passwords desc;
 ```
@@ -181,7 +181,7 @@ select
   city,
   isp
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```
@@ -202,7 +202,7 @@ select
   city,
   isp
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```
@@ -219,7 +219,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   date_compromised > current_date - interval '30 days'
 order by
@@ -235,7 +235,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   date_compromised > date('now', '-30 days')
 order by
@@ -255,7 +255,7 @@ select
   operating_system,
   date_compromised
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```
@@ -270,7 +270,7 @@ select
   operating_system,
   date_compromised
 from
-  hudsonrock_ip_search
+  hudsonrock_search_by_ip
 where
   ip = '8.8.8.8';
 ```

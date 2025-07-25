@@ -1,20 +1,20 @@
 ---
-title: "Steampipe Table: hudsonrock_email_search"
+title: "Steampipe Table: hudsonrock_search_by_email"
 description: "Query Hudson Rock infostealer and credential data by email with SQL."
 folder: "Email"
 ---
 
-# Table: hudsonrock_email_search - Query Hudson Rock Email Intelligence using SQL
+# Table: hudsonrock_search_by_email - Query Hudson Rock Email Intelligence using SQL
 
-The `hudsonrock_email_search` table allows you to query compromised credentials and infostealer data by email using the Hudson Rock API. This table provides a detailed view of infostealer infections, password and login exposures, stealer malware families, and more for a given email address.
+The `hudsonrock_search_by_email` table allows you to query compromised credentials and infostealer data by email using the Hudson Rock API. This table provides a detailed view of infostealer infections, password and login exposures, stealer malware families, and more for a given email address.
 
 ## Table Usage Guide
 
-The `hudsonrock_email_search` table provides insights about compromised credentials, infostealer malware, and related data for a given email address, including compromise date, stealer family, computer and OS details, IP address, and exposed passwords and logins.
+The `hudsonrock_search_by_email` table provides insights about compromised credentials, infostealer malware, and related data for a given email address, including compromise date, stealer family, computer and OS details, IP address, and exposed passwords and logins.
 
 **Important Notes**
 
-- You must specify the `email` in the `where` or join clause (`where email=`, `join hudsonrock_email_search s on s.email=`) in order to query this table.
+- You must specify the `email` in the `where` or join clause (`where email=`, `join hudsonrock_search_by_email s on s.email=`) in order to query this table.
 
 ## Examples
 
@@ -30,7 +30,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -44,7 +44,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -58,7 +58,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -69,7 +69,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -83,7 +83,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -94,7 +94,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -119,7 +119,7 @@ select
   isp,
   compromise_date
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -141,7 +141,7 @@ select
   isp,
   compromise_date
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -159,7 +159,7 @@ select
   computer_name,
   os
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -174,7 +174,7 @@ select
   computer_name,
   os
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   email = 'user@example.com';
 ```
@@ -191,7 +191,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   compromise_date > current_date - interval '30 days'
 order by
@@ -207,7 +207,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   compromise_date > date('now', '-30 days')
 order by
@@ -223,7 +223,7 @@ select
   count(*) as compromise_count,
   count(distinct email) as unique_emails
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   stealer_family is not null
 group by
@@ -238,7 +238,7 @@ select
   count(*) as compromise_count,
   count(distinct email) as unique_emails
 from
-  hudsonrock_email_search
+  hudsonrock_search_by_email
 where
   stealer_family is not null
 group by

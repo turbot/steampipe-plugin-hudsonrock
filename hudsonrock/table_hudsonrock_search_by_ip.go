@@ -9,15 +9,15 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
-func tableHudsonrockIpSearch(_ context.Context) *plugin.Table {
+func tableHudsonrockSearchByIp(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "hudsonrock_ip_search",
+		Name:        "hudsonrock_search_by_ip",
 		Description: "Search for info-stealer data by IP address using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
 				{Name: "ip", Require: plugin.Required},
 			},
-			Hydrate: listHudsonrockIpSearch,
+			Hydrate: listHudsonrockSearchByIp,
 		},
 		Columns: []*plugin.Column{
 			{Name: "ip", Type: proto.ColumnType_STRING, Description: "IP address searched.", Transform: transform.FromQual("ip")},
@@ -44,16 +44,16 @@ type IpDetails struct {
 	Stealer                api.IPStealer
 }
 
-func listHudsonrockIpSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listHudsonrockSearchByIp(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	ip := d.EqualsQuals["ip"].GetStringValue()
 	if ip == "" {
 		return nil, nil
 	}
 
 	client := NewClient(ctx, d)
-	output, err := client.IpSearch(ctx, ip)
+	output, err := client.SearchByIp(ctx, ip)
 	if err != nil {
-		plugin.Logger(ctx).Error("hudsonrock_ip_search.listHudsonrockIpSearch", "api_error", err)
+		plugin.Logger(ctx).Error("hudsonrock_search_by_ip.listHudsonrockSearchByIp", "api_error", err)
 		return nil, err
 	}
 

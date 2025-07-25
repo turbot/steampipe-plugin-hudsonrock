@@ -8,15 +8,15 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
-func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
+func tableHudsonrockSearchByDomain(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "hudsonrock_domain_search",
+		Name:        "hudsonrock_search_by_domain",
 		Description: "Search for domain-related cyber crime and infostealer intelligence using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
 				{Name: "domain", Require: plugin.Required},
 			},
-			Hydrate: listHudsonrockDomainSearch,
+			Hydrate: listHudsonrockSearchByDomain,
 		},
 		Columns: []*plugin.Column{
 			{Name: "domain", Type: proto.ColumnType_STRING, Description: "Domain searched.", Transform: transform.FromQual("domain")},
@@ -44,16 +44,16 @@ func tableHudsonrockDomainSearch(_ context.Context) *plugin.Table {
 	}
 }
 
-func listHudsonrockDomainSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listHudsonrockSearchByDomain(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	domain := d.EqualsQuals["domain"].GetStringValue()
 	if domain == "" {
 		return nil, nil
 	}
 
 	client := NewClient(ctx, d)
-	result, err := client.DomainSearch(ctx, domain)
+	result, err := client.SearchByDomain(ctx, domain)
 	if err != nil {
-		plugin.Logger(ctx).Error("hudsonrock_domain_search.listHudsonrockDomainSearch", "api_error", err)
+		plugin.Logger(ctx).Error("hudsonrock_search_by_domain.listHudsonrockSearchByDomain", "api_error", err)
 		return nil, err
 	}
 

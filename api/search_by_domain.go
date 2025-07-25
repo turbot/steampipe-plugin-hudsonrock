@@ -87,7 +87,7 @@ type DomainOccurrence struct {
 	Domain     *string `json:"domain"` // pointer to handle nulls
 }
 
-func (c *Client) DomainSearch(ctx context.Context, domain string) (DomainSearchResponse, error) {
+func (c *Client) SearchByDomain(ctx context.Context, domain string) (DomainSearchResponse, error) {
 	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {

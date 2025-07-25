@@ -1,20 +1,20 @@
 ---
-title: "Steampipe Table: hudsonrock_domain_search"
+title: "Steampipe Table: hudsonrock_search_by_domain"
 description: "Query Hudson Rock domain intelligence data with SQL."
 folder: "Domain"
 ---
 
-# Table: hudsonrock_domain_search - Query Hudson Rock Domain Intelligence using SQL
+# Table: hudsonrock_search_by_domain - Query Hudson Rock Domain Intelligence using SQL
 
-The `hudsonrock_domain_search` table allows you to query domain-related cybercrime and infostealer intelligence from the Hudson Rock API. This table provides a comprehensive view of a domain's exposure, including employee and user compromise statistics, stealer malware families, password strength, third-party associations, and more.
+The `hudsonrock_search_by_domain` table allows you to query domain-related cybercrime and infostealer intelligence from the Hudson Rock API. This table provides a comprehensive view of a domain's exposure, including employee and user compromise statistics, stealer malware families, password strength, third-party associations, and more.
 
 ## Table Usage Guide
 
-The `hudsonrock_domain_search` table provides insights about a domain, including the number of employees, users, third parties, total records, stealer families, password statistics, and more, as discovered by Hudson Rock's intelligence platform.
+The `hudsonrock_search_by_domain` table provides insights about a domain, including the number of employees, users, third parties, total records, stealer families, password statistics, and more, as discovered by Hudson Rock's intelligence platform.
 
 **Important Notes**
 
-- You must specify the `domain` in the `where` or join clause (`where domain=`, `join hudsonrock_domain_search s on s.domain=`) in order to query this table.
+- You must specify the `domain` in the `where` or join clause (`where domain=`, `join hudsonrock_search_by_domain s on s.domain=`) in order to query this table.
 
 ## Examples
 
@@ -31,7 +31,7 @@ select
   third_parties,
   logo
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'tesla.com';
 ```
@@ -46,7 +46,7 @@ select
   third_parties,
   logo
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'tesla.com';
 ```
@@ -59,7 +59,7 @@ select
   domain,
   logo
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -69,7 +69,7 @@ select
   domain,
   logo
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -82,7 +82,7 @@ select
   domain,
   stealer_families
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -92,7 +92,7 @@ select
   domain,
   stealer_families
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -106,7 +106,7 @@ select
   employee_passwords,
   user_passwords
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -117,7 +117,7 @@ select
   employee_passwords,
   user_passwords
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -130,7 +130,7 @@ select
   domain,
   jsonb_array_elements(third_party_domains) as third_party_domain
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -140,7 +140,7 @@ select
   domain,
   json_each(third_party_domains) as third_party_domain
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'hp.com';
 ```
@@ -162,7 +162,7 @@ select
   logo,
   third_party_domains
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'microsoft.com';
 ```
@@ -181,7 +181,7 @@ select
   logo,
   third_party_domains
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   domain = 'microsoft.com';
 ```
@@ -197,7 +197,7 @@ select
   users,
   total_stealers
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   total > 1000
   and employees > 100
@@ -213,7 +213,7 @@ select
   users,
   total_stealers
 from
-  hudsonrock_domain_search
+  hudsonrock_search_by_domain
 where
   total > 1000
   and employees > 100

@@ -8,42 +8,42 @@ import (
 	"resty.dev/v3"
 )
 
-// Define response struct
-type EmailSearchResponse struct {
-	Message                string           `json:"message"`
-	Stealers               []EmailStealer `json:"stealers"`
-	TotalCorporateServices int              `json:"total_corporate_services"`
-	TotalUserServices      int              `json:"total_user_services"`
+// IPSearchResponse represents the response for an IP compromise search.
+type IPSearchResponse struct {
+	Message                string      `json:"message"`
+	Stealers               []IPStealer `json:"stealers"`
+	TotalCorporateServices int         `json:"total_corporate_services"`
+	TotalUserServices      int         `json:"total_user_services"`
 }
 
-// EmailStealer contains information about each stealer compromise.
-type EmailStealer struct {
+// IPStealer contains details about the infection associated with the IP.
+type IPStealer struct {
 	TotalCorporateServices int      `json:"total_corporate_services"`
 	TotalUserServices      int      `json:"total_user_services"`
 	DateCompromised        string   `json:"date_compromised"`
+	IP                     string   `json:"ip"`
 	ComputerName           string   `json:"computer_name"`
 	OperatingSystem        string   `json:"operating_system"`
 	MalwarePath            string   `json:"malware_path"`
 	Antiviruses            []string `json:"antiviruses"`
-	IP                     string   `json:"ip"`
 	TopPasswords           []string `json:"top_passwords"`
 	TopLogins              []string `json:"top_logins"`
 }
 
-func (c *Client) EmailSearch(ctx context.Context, email string) (EmailSearchResponse, error) {
+func (c *Client) SearchByIp(ctx context.Context, ip string) (IPSearchResponse, error) {
 	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {
-		return EmailSearchResponse{}, err
+		return IPSearchResponse{}, err
 	}
-	endpoint.Path = "/api/json/v2/osint-tools/search-by-email"
+	endpoint.Path = "/api/json/v2/osint-tools/search-by-ip"
 
 	// Add query parameters
 	query := endpoint.Query()
-	query.Set("email", email)
+	query.Set("ip", ip)
 	endpoint.RawQuery = query.Encode()
 
-	var result EmailSearchResponse
+	var result IPSearchResponse
 
 	// Create the request function for retry logic
 	requestFunc := func() (*resty.Response, error) {
@@ -56,12 +56,12 @@ func (c *Client) EmailSearch(ctx context.Context, email string) (EmailSearchResp
 	// Execute with client's default retry settings
 	resp, err := c.executeWithRetryDefault(requestFunc)
 	if err != nil {
-		plugin.Logger(ctx).Error("Email search failed", "email", email, "error", err)
+		plugin.Logger(ctx).Error("IP search failed", "ip", ip, "error", err)
 		return result, err
 	}
 
-	plugin.Logger(ctx).Debug("Email search completed successfully",
-		"email", email,
+	plugin.Logger(ctx).Debug("IP search completed successfully",
+		"ip", ip,
 		"status", resp.StatusCode(),
 		"max_retries", c.MaxRetries)
 
