@@ -51,7 +51,7 @@ func listHudsonrockUsernameSearch(ctx context.Context, d *plugin.QueryData, _ *p
 		return nil, nil
 	}
 
-	client := api.NewClient()
+	client := NewClient(ctx, d)
 	output, err := client.UsernameSearch(ctx, username)
 	if err != nil {
 		plugin.Logger(ctx).Error("hudsonrock_username_search.listHudsonrockUsernameSearch", "api_error", err)

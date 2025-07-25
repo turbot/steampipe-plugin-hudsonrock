@@ -51,7 +51,7 @@ func listHudsonrockEmailSearch(ctx context.Context, d *plugin.QueryData, _ *plug
 		return nil, nil
 	}
 
-	client := api.NewClient()
+	client := NewClient(ctx, d)
 	output, err := client.EmailSearch(ctx, email)
 	if err != nil {
 		plugin.Logger(ctx).Error("hudsonrock_email_search.listHudsonrockEmailSearch", "api_error", err)

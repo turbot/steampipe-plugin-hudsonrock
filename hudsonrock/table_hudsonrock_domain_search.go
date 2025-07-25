@@ -3,7 +3,6 @@ package hudsonrock
 import (
 	"context"
 
-	"github.com/turbot/steampipe-plugin-hudsonrock/api"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -51,7 +50,7 @@ func listHudsonrockDomainSearch(ctx context.Context, d *plugin.QueryData, _ *plu
 		return nil, nil
 	}
 
-	client := api.NewClient()
+	client := NewClient(ctx, d)
 	result, err := client.DomainSearch(ctx, domain)
 	if err != nil {
 		plugin.Logger(ctx).Error("hudsonrock_domain_search.listHudsonrockDomainSearch", "api_error", err)
