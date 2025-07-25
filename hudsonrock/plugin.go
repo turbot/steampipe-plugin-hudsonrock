@@ -18,12 +18,11 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			NewInstance: ConfigInstance,
 		},
 		TableMap: map[string]*plugin.Table{
-			"hudsonrock_domain_search":   tableHudsonrockDomainSearch(ctx),
-			"hudsonrock_email_search":    tableHudsonrockEmailSearch(ctx),
-			"hudsonrock_ip_search":       tableHudsonrockIpSearch(ctx),
-			"hudsonrock_urls_by_domain":  tableHudsonrockUrlsByDomain(ctx),
-			"hudsonrock_username_search": tableHudsonrockUsernameSearch(ctx),
+			"hudsonrock_search_by_domain":   tableHudsonrockSearchByDomain(ctx),
+			"hudsonrock_search_by_email":    tableHudsonrockSearchByEmail(ctx),
+			"hudsonrock_search_by_ip":       tableHudsonrockSearchByIp(ctx),
+			"hudsonrock_url_by_domain":      tableHudsonrockUrlByDomain(ctx),
+			"hudsonrock_search_by_username": tableHudsonrockSearchByUsername(ctx),
 		},
 	}
 }
-

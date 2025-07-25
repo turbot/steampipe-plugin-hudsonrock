@@ -9,19 +9,19 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
-func tableHudsonrockEmailSearch(_ context.Context) *plugin.Table {
+func tableHudsonrockSearchByUsername(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "hudsonrock_email_search",
-		Description: "Search for compromised credentials and infostealer data by email using Hudson Rock's API.",
+		Name:        "hudsonrock_search_by_username",
+		Description: "Search for compromised credentials and infostealer data by username using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "email", Require: plugin.Required},
+				{Name: "username", Require: plugin.Required},
 			},
-			Hydrate: listHudsonrockEmailSearch,
+			Hydrate: listHudsonrockSearchByUsername,
 		},
 		Columns: []*plugin.Column{
-			{Name: "email", Type: proto.ColumnType_STRING, Description: "Email searched.", Transform: transform.FromQual("email")},
-			{Name: "message", Type: proto.ColumnType_STRING, Description: "API message about the email."},
+			{Name: "username", Type: proto.ColumnType_STRING, Description: "Username searched.", Transform: transform.FromQual("username")},
+			{Name: "message", Type: proto.ColumnType_STRING, Description: "API message about the username."},
 			{Name: "stealer_total_corporate_services", Type: proto.ColumnType_INT, Description: "Stealer total corporate services found.", Transform: transform.FromField("Stealer.TotalCorporateServices")},
 			{Name: "stealer_total_user_services", Type: proto.ColumnType_INT, Description: "Stealer total user services found.", Transform: transform.FromField("Stealer.TotalUserServices")},
 			{Name: "date_compromised", Type: proto.ColumnType_TIMESTAMP, Description: "Timestamp when the computer was compromised.", Transform: transform.FromField("Stealer.DateCompromised")},
@@ -37,29 +37,29 @@ func tableHudsonrockEmailSearch(_ context.Context) *plugin.Table {
 	}
 }
 
-type EmailDetails struct {
+type UserDetails struct {
 	Message                string
 	TotalCorporateServices int
 	TotalUserServices      int
-	Stealer                api.EmailStealer
+	Stealer                api.UsernameStealer
 }
 
-func listHudsonrockEmailSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-
-	email := d.EqualsQuals["email"].GetStringValue()
-	if email == "" {
+func listHudsonrockSearchByUsername(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	quals := d.EqualsQuals
+	username := quals["username"].GetStringValue()
+	if username == "" {
 		return nil, nil
 	}
 
 	client := NewClient(ctx, d)
-	output, err := client.EmailSearch(ctx, email)
+	output, err := client.SearchByUsername(ctx, username)
 	if err != nil {
-		plugin.Logger(ctx).Error("hudsonrock_email_search.listHudsonrockEmailSearch", "api_error", err)
+		plugin.Logger(ctx).Error("hudsonrock_search_by_username.listHudsonrockSearchByUsername", "api_error", err)
 		return nil, err
 	}
 
 	for _, result := range output.Stealers {
-		d.StreamListItem(ctx, &EmailDetails{output.Message, output.TotalCorporateServices, output.TotalUserServices, result})
+		d.StreamListItem(ctx, &UserDetails{output.Message, output.TotalCorporateServices, output.TotalUserServices, result})
 
 		// Context can be cancelled due to manual cancellation or the limit has been hit
 		if d.RowsRemaining(ctx) == 0 {
@@ -67,4 +67,5 @@ func listHudsonrockEmailSearch(ctx context.Context, d *plugin.QueryData, _ *plug
 		}
 	}
 	return nil, nil
+
 }

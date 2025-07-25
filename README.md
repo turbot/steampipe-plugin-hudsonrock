@@ -18,7 +18,7 @@ steampipe plugin install hudsonrock
 
 Run a query:
 ```sql
-select * from hudsonrock_domain_search where domain = 'steampipe.io';
+select * from hudsonrock_search_by_domain where domain = 'steampipe.io';
 ```
 
 ## Engines

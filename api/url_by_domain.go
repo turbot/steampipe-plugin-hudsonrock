@@ -20,7 +20,7 @@ type URLDataGroup struct {
 	ClientsURLs   []URLInfo `json:"clients_urls"`
 }
 
-func (c *Client) URLsByDomain(ctx context.Context, domain string) (URLSearchResponse, error) {
+func (c *Client) UrlByDomain(ctx context.Context, domain string) (URLSearchResponse, error) {
 	// Build full URL using BaseURL constant
 	endpoint, err := url.Parse(BaseURL)
 	if err != nil {

@@ -8,15 +8,15 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
-func tableHudsonrockUrlsByDomain(_ context.Context) *plugin.Table {
+func tableHudsonrockUrlByDomain(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "hudsonrock_urls_by_domain",
+		Name:        "hudsonrock_url_by_domain",
 		Description: "List URLs identified by infostealer infections for a given domain using Hudson Rock's API.",
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.KeyColumnSlice{
 				{Name: "domain", Require: plugin.Required},
 			},
-			Hydrate: listHudsonrockUrlsByDomain,
+			Hydrate: listHudsonrockUrlByDomain,
 		},
 		Columns: []*plugin.Column{
 			{Name: "domain", Type: proto.ColumnType_STRING, Description: "Domain searched.", Transform: transform.FromQual("domain")},
@@ -28,16 +28,16 @@ func tableHudsonrockUrlsByDomain(_ context.Context) *plugin.Table {
 	}
 }
 
-func listHudsonrockUrlsByDomain(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listHudsonrockUrlByDomain(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	domain := d.EqualsQuals["domain"].GetStringValue()
 	if domain == "" {
 		return nil, nil
 	}
 
 	client := NewClient(ctx, d)
-	result, err := client.URLsByDomain(ctx, domain)
+	result, err := client.UrlByDomain(ctx, domain)
 	if err != nil {
-		plugin.Logger(ctx).Error("hudsonrock_urls_by_domain.listHudsonrockUrlsByDomain", "api_error", err)
+		plugin.Logger(ctx).Error("hudsonrock_url_by_domain.listHudsonrockUrlByDomain", "api_error", err)
 		return nil, err
 	}
 

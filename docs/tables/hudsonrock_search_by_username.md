@@ -1,20 +1,20 @@
 ---
-title: "Steampipe Table: hudsonrock_username_search"
+title: "Steampipe Table: hudsonrock_search_by_username"
 description: "Query Hudson Rock infostealer and credential data by username with SQL."
 folder: "User"
 ---
 
-# Table: hudsonrock_username_search - Query Hudson Rock Username Intelligence using SQL
+# Table: hudsonrock_search_by_username - Query Hudson Rock Username Intelligence using SQL
 
-The `hudsonrock_username_search` table allows you to query compromised credentials and infostealer data by username using the Hudson Rock API. This table provides a detailed view of infostealer infections, password and login exposures, stealer malware families, and more for a given username.
+The `hudsonrock_search_by_username` table allows you to query compromised credentials and infostealer data by username using the Hudson Rock API. This table provides a detailed view of infostealer infections, password and login exposures, stealer malware families, and more for a given username.
 
 ## Table Usage Guide
 
-The `hudsonrock_username_search` table provides insights about compromised credentials, infostealer malware, and related data for a given username, including compromise date, stealer family, computer and OS details, IP address, and exposed passwords and logins.
+The `hudsonrock_search_by_username` table provides insights about compromised credentials, infostealer malware, and related data for a given username, including compromise date, stealer family, computer and OS details, IP address, and exposed passwords and logins.
 
 **Important Notes**
 
-- You must specify the `username` in the `where` or join clause (`where username=`, `join hudsonrock_username_search s on s.username=`) in order to query this table.
+- You must specify the `username` in the `where` or join clause (`where username=`, `join hudsonrock_search_by_username s on s.username=`) in order to query this table.
 
 ## Examples
 
@@ -30,7 +30,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe';
 ```
@@ -44,7 +44,7 @@ select
   antiviruses,
   malware_path
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe';
 ```
@@ -58,7 +58,7 @@ select
   top_passwords,
   jsonb_array_length(top_passwords) as num_passwords
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe'
   and jsonb_array_length(top_passwords) > 3;
@@ -70,7 +70,7 @@ select
   top_passwords,
   json_array_length(top_passwords) as num_passwords
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe'
   and json_array_length(top_passwords) > 3;
@@ -84,7 +84,7 @@ select
   username,
   antiviruses
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe'
   and antiviruses::text ilike '%Kaspersky%';
@@ -95,8 +95,8 @@ select
   username,
   antiviruses
 from
-  hudsonrock_username_search,
-  json_each(hudsonrock_username_search.antiviruses)
+  hudsonrock_search_by_username,
+  json_each(hudsonrock_search_by_username.antiviruses)
 where
   username = 'johndoe'
   and lower(json_each.value) = 'kaspersky';
@@ -111,7 +111,7 @@ select
   top_passwords,
   jsonb_array_length(top_passwords) as num_passwords
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe'
 order by
@@ -124,7 +124,7 @@ select
   top_passwords,
   json_array_length(top_passwords) as num_passwords
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe'
 order by num_passwords desc;
@@ -150,7 +150,7 @@ select
   isp,
   compromise_date
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe';
 ```
@@ -172,7 +172,7 @@ select
   isp,
   compromise_date
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   username = 'johndoe';
 ```
@@ -189,7 +189,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   compromise_date > current_date - interval '30 days'
 order by
@@ -205,7 +205,7 @@ select
   top_passwords,
   top_logins
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   compromise_date > date('now', '-30 days')
 order by
@@ -221,7 +221,7 @@ select
   count(*) as compromise_count,
   count(distinct username) as unique_usernames
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   stealer_family is not null
 group by
@@ -236,7 +236,7 @@ select
   count(*) as compromise_count,
   count(distinct username) as unique_usernames
 from
-  hudsonrock_username_search
+  hudsonrock_search_by_username
 where
   stealer_family is not null
 group by

@@ -1,20 +1,20 @@
 ---
-title: "Steampipe Table: hudsonrock_urls_by_domain"
+title: "Steampipe Table: hudsonrock_url_by_domain"
 description: "Query Hudson Rock for URLs identified by infostealer infections for a given domain with SQL."
 folder: "URL"
 ---
 
-# Table: hudsonrock_urls_by_domain - Query URLs Identified by Infostealer Infections for a Domain using SQL
+# Table: hudsonrock_url_by_domain - Query URLs Identified by Infostealer Infections for a Domain using SQL
 
-The `hudsonrock_urls_by_domain` table allows you to query URLs identified by infostealer infections for a given domain using the Hudson Rock API. This table provides lists of employee, client, and all URLs associated with infostealer infections for a specified domain, as well as additional metadata and API messages.
+The `hudsonrock_url_by_domain` table allows you to query URLs identified by infostealer infections for a given domain using the Hudson Rock API. This table provides lists of employee, client, and all URLs associated with infostealer infections for a specified domain, as well as additional metadata and API messages.
 
 ## Table Usage Guide
 
-The `hudsonrock_urls_by_domain` table provides lists of employee and client URLs, as well as all URLs, associated with infostealer infections for a specified domain. It also includes any API messages and raw data returned by the Hudson Rock API.
+The `hudsonrock_url_by_domain` table provides lists of employee and client URLs, as well as all URLs, associated with infostealer infections for a specified domain. It also includes any API messages and raw data returned by the Hudson Rock API.
 
 **Important Notes**
 
-- You must specify the `domain` in the `where` or join clause (`where domain=`, `join hudsonrock_urls_by_domain s on s.domain=`) in order to query this table.
+- You must specify the `domain` in the `where` or join clause (`where domain=`, `join hudsonrock_url_by_domain s on s.domain=`) in order to query this table.
 
 ## Examples
 
@@ -27,7 +27,7 @@ select
   employees_urls,
   clients_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
@@ -38,7 +38,7 @@ select
   employees_urls,
   clients_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
@@ -51,7 +51,7 @@ select
   domain,
   jsonb_array_elements(employees_urls) as employee_url
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
@@ -61,7 +61,7 @@ select
   domain,
   json_each(employees_urls) as employee_url
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
@@ -75,7 +75,7 @@ select
   employees_urls,
   jsonb_array_length(employees_urls) as num_employee_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com'
   and jsonb_array_length(employees_urls) > 5;
@@ -87,7 +87,7 @@ select
   employees_urls,
   json_array_length(employees_urls) AS num_employee_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com'
   and json_array_length(employees_urls) > 5;
@@ -101,7 +101,7 @@ select
   domain,
   employees_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   exists (
     select 1 from jsonb_array_elements_text(employees_urls) as url where url ilike '%login%'
@@ -114,7 +114,7 @@ select
   domain,
   employees_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   exists (
     select 1
@@ -133,7 +133,7 @@ select
   employees_urls,
   jsonb_array_length(employees_urls) as num_employee_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com'
 order by
@@ -146,7 +146,7 @@ select
   employees_urls,
   json_array_length(employees_urls) AS num_employee_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com'
 order by
@@ -166,7 +166,7 @@ select
   jsonb_array_length(employees_urls) as num_employee_urls,
   jsonb_array_length(clients_urls) as num_client_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
@@ -181,7 +181,7 @@ select
   json_array_length(employees_urls) as num_employee_urls,
   json_array_length(clients_urls) as num_client_urls
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
@@ -194,7 +194,7 @@ select
   domain,
   jsonb_array_elements(clients_urls) as client_url
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
@@ -204,7 +204,7 @@ select
   domain,
   json_each(clients_urls) as client_url
 from
-  hudsonrock_urls_by_domain
+  hudsonrock_url_by_domain
 where
   domain = 'hp.com';
 ```
