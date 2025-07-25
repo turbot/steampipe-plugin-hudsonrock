@@ -50,7 +50,7 @@ func listHudsonrockIpSearch(ctx context.Context, d *plugin.QueryData, _ *plugin.
 		return nil, nil
 	}
 
-	client := api.NewClient()
+	client := NewClient(ctx, d)
 	output, err := client.IpSearch(ctx, ip)
 	if err != nil {
 		plugin.Logger(ctx).Error("hudsonrock_ip_search.listHudsonrockIpSearch", "api_error", err)

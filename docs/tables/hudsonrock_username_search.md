@@ -1,7 +1,7 @@
 ---
 title: "Steampipe Table: hudsonrock_username_search"
 description: "Query Hudson Rock infostealer and credential data by username with SQL."
-folder: "Username"
+folder: "User"
 ---
 
 # Table: hudsonrock_username_search - Query Hudson Rock Username Intelligence using SQL
