@@ -12,13 +12,21 @@ Use SQL to query infrastructure including servers, networks, identity and more f
 ## Quick start
 
 Install the plugin with [Steampipe](https://steampipe.io):
+
 ```shell
 steampipe plugin install hudsonrock
 ```
 
 Run a query:
+
 ```sql
-select * from hudsonrock_search_by_domain where domain = 'steampipe.io';
+select
+  domain,
+  total_stealers
+from
+  hudsonrock_search_by_domain
+where
+  domain = 'steampipe.io';
 ```
 
 ## Engines
@@ -47,6 +55,7 @@ cd steampipe-plugin-hudsonrock
 ```
 
 Build, which automatically installs the new version to your `~/.steampipe/plugins` directory:
+
 ```
 make
 ```
@@ -57,6 +66,7 @@ cp config/* ~/.steampipe/config
 ```
 
 Try it!
+
 ```
 steampipe query
 > .inspect hudsonrock

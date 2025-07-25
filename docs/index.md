@@ -1,11 +1,11 @@
 ---
 organization: Turbot
-category: ["internet"]
+category: ["security"]
 icon_url: "/images/plugins/turbot/hudsonrock.svg"
 brand_color: "#ffc300"
 display_name: Hudson Rock
 name: hudsonrock
-description: Steampipe plugin for querying domains, name servers and contact information from Hudson Rock.
+description: Steampipe plugin for querying email IDs, domains and IP addresses from Hudson Rock.
 og_description: Query Hudson Rock with SQL! Open source CLI. No DB required.
 og_image: "/images/plugins/turbot/hudsonrock-social-graphic.png"
 engines: ["steampipe", "sqlite", "postgres", "export"]
