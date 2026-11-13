@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/turbot/steampipe-plugin-hudsonrock/api"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin"
 )
 
 func NewClient(ctx context.Context, d *plugin.QueryData) *api.Client {
